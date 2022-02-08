@@ -115,6 +115,8 @@ exports.signinNaver = async (req, res, next) => {
       errMessage:
         "ERROR: fail to authenticate from Naver server with your data.",
     });
+
+    return;
   }
 
   try {
@@ -145,6 +147,8 @@ exports.signinNaver = async (req, res, next) => {
         result: "error",
         errMessage: "Please, login again, select email & nickname too...",
       });
+
+      return;
     }
 
     let userInfo = await getUser({ email, socialService });
