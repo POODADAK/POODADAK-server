@@ -4,9 +4,18 @@ require("./config/mongoose");
 const path = require("path");
 
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 const express = require("express");
 const helmet = require("helmet");
 const logger = require("morgan");
+
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN_URL,
+  preflightContinue: true,
+  credentials: true,
+};
+
+const authRouter = require("./routes/auth");
 
 const app = express();
 
@@ -16,5 +25,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+app.use(cors(corsOptions));
+
+app.use("/auth", authRouter);
 
 module.exports = app;
