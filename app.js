@@ -9,16 +9,17 @@ const express = require("express");
 const helmet = require("helmet");
 const logger = require("morgan");
 
+const authRouter = require("./routes/authRouter");
+
 const corsOptions = {
   origin: process.env.CORS_ORIGIN_URL,
   preflightContinue: true,
   credentials: true,
 };
 
-const authRouter = require("./routes/auth");
-
 const app = express();
 
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(logger("dev"));
 app.use(express.json());
