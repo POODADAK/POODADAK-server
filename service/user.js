@@ -7,3 +7,7 @@ exports.getUser = async function (userInfo) {
 exports.createUser = async function (newUser) {
   return await User.create(newUser);
 };
+
+exports.getUserById = async function (id) {
+  return await User.findById(id);
+};
