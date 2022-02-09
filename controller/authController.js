@@ -20,7 +20,7 @@ function createAndSendToken(user, res) {
 
   res.cookie("POODADAK_TOKEN", token, cookieOptions);
   res.json({
-    status: "ok",
+    result: "ok",
   });
 }
 
@@ -51,7 +51,7 @@ exports.signinKakao = async (req, res, next) => {
 
     if (!didUserApproveEmail) {
       await axios.post(
-        process.env.KAKAO_REST_API_CLIENT_SECRET,
+        process.env.KAKAO_REST_API_UNLINK_USER_URL,
         {},
         {
           headers: {
@@ -60,7 +60,7 @@ exports.signinKakao = async (req, res, next) => {
         }
       );
 
-      res.json({
+      res.status(401).json({
         result: "error",
         errMessage: "Please, login again, select email & nickname too...",
       });
@@ -110,7 +110,7 @@ exports.signinNaver = async (req, res, next) => {
   const { code, state } = req.body;
 
   if (!code || !state) {
-    res.json({
+    res.status(401).json({
       result: "error",
       errMessage:
         "ERROR: fail to authenticate from Naver server with your data.",
@@ -143,7 +143,25 @@ exports.signinNaver = async (req, res, next) => {
     const { email, nickname } = data.response;
 
     if (!email || !nickname) {
-      res.json({
+      const params = new url.URLSearchParams({
+        client_id: process.env.NAVER_API_CLIENT_ID,
+        client_secret: process.env.NAVER_API_CLIENT_SECRET,
+        access_token,
+        grant_type: "delete",
+        service_provider: "Naver",
+      });
+
+      await axios.post(
+        process.env.NAVER_REST_API_UNLINK_USER_URL,
+        params.toString(),
+        {
+          headers: {
+            "Content-type": "application/x-www-form-urlencoded;charset=utf-8",
+          },
+        }
+      );
+
+      res.status(401).json({
         result: "error",
         errMessage: "Please, login again, select email & nickname too...",
       });
@@ -169,8 +187,8 @@ exports.signinNaver = async (req, res, next) => {
 };
 
 exports.eraseCookie = (req, res, next) => {
-  res.clearCookie("POODADAK_TOKEN", "", new Date(0));
+  res.clearCookie("POODADAK_TOKEN");
   res.json({
-    status: "deleted",
+    result: "deleted",
   });
 };

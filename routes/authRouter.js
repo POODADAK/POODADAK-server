@@ -7,9 +7,8 @@ const {
   eraseCookie,
 } = require("../controller/authController");
 
-router.get("/token-elimination", eraseCookie);
-
 router.post("/kakao", signinKakao);
 router.post("/naver", signinNaver);
+router.post("/token-elimination", eraseCookie);
 
 module.exports = router;
