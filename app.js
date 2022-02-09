@@ -30,6 +30,4 @@ app.use(cors(corsOptions));
 
 app.use("/auth", authRouter);
 
-app.use("/auth", authRouter);
-
 module.exports = app;

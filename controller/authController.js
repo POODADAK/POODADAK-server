@@ -167,3 +167,10 @@ exports.signinNaver = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.eraseCookie = (req, res, next) => {
+  res.clearCookie("POODADAK_TOKEN", "", new Date(0));
+  res.json({
+    status: "deleted",
+  });
+};
