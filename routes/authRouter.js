@@ -1,9 +1,9 @@
 const express = require("express");
-
-const authController = require("../controller/authController");
-
 const router = express.Router();
 
-router.post("/kakao", authController.signinKakao);
+const { signinKakao, signinNaver } = require("../controller/authController");
+
+router.post("/kakao", signinKakao);
+router.post("/naver", signinNaver);
 
 module.exports = router;
