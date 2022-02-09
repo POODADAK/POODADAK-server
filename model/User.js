@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["GOLD", "SILVER", "BRONZE"],
     default: "BRONZE",
+    required: true,
   },
   email: {
     type: String,
@@ -17,8 +18,9 @@ const userSchema = new mongoose.Schema({
   socialService: {
     type: String,
     enum: ["KAKAO", "NAVER"],
+    required: true,
   },
-  reviews: {
+  reviewList: {
     type: [mongoose.ObjectId],
     ref: "Reviews",
   },

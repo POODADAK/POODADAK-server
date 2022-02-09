@@ -10,6 +10,7 @@ const helmet = require("helmet");
 const logger = require("morgan");
 
 const authRouter = require("./routes/authRouter");
+const toiletsRouter = require("./routes/toiletsRouter");
 
 const corsOptions = {
   origin: process.env.CORS_ORIGIN_URL,
@@ -29,5 +30,6 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cors(corsOptions));
 
 app.use("/auth", authRouter);
+app.use("/toilets", toiletsRouter);
 
 module.exports = app;
