@@ -22,6 +22,8 @@ function createAndSendToken(user, res) {
   res.json({
     result: "ok",
   });
+
+  return;
 }
 
 exports.signinKakao = async (req, res, next) => {
