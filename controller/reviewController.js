@@ -3,7 +3,6 @@ const { createReview, updateReview } = require("../service/review");
 exports.saveReview = async (req, res, next) => {
   try {
     const {
-      writer,
       toilet,
       rating,
       description,
@@ -12,7 +11,6 @@ exports.saveReview = async (req, res, next) => {
       updatedAt,
     } = req.data;
     const submittedReview = {
-      writer,
       toilet,
       rating,
       description,
@@ -38,7 +36,6 @@ exports.saveReview = async (req, res, next) => {
 exports.editReview = async (req, res, next) => {
   try {
     const {
-      writer,
       toilet,
       rating,
       description,
@@ -48,7 +45,6 @@ exports.editReview = async (req, res, next) => {
       reviewId,
     } = req.data;
     const submittedReview = {
-      writer,
       toilet,
       rating,
       description,
