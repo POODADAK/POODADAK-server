@@ -10,6 +10,7 @@ const helmet = require("helmet");
 const logger = require("morgan");
 
 const authRouter = require("./routes/authRouter");
+const reviewRouter = require("./routes/reviewRouter");
 const toiletsRouter = require("./routes/toiletsRouter");
 
 const corsOptions = {
@@ -31,5 +32,6 @@ app.use(cors(corsOptions));
 
 app.use("/auth", authRouter);
 app.use("/toilets", toiletsRouter);
+app.use("/review", reviewRouter);
 
 module.exports = app;
