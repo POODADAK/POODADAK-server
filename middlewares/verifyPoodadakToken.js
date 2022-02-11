@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const { getUserById } = require("../service/user");
 
-exports.verifyPoodadakToken = async (req, res, next) => {
+const verifyPoodadakToken = async (req, res, next) => {
   const fetchedToken = req.cookies.POODADAK_TOKEN;
 
   if (!fetchedToken) {
@@ -32,3 +32,5 @@ exports.verifyPoodadakToken = async (req, res, next) => {
     next(error);
   }
 };
+
+module.exports = verifyPoodadakToken;

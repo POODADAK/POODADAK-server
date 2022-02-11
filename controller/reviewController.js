@@ -9,8 +9,9 @@ exports.saveReview = async (req, res, next) => {
       image,
       didToiletPaperExist,
       updatedAt,
-    } = req.data;
+    } = req.body;
     const submittedReview = {
+      writer: req.userInfo._id,
       toilet,
       rating,
       description,
@@ -25,8 +26,8 @@ exports.saveReview = async (req, res, next) => {
       result: "ok",
       review: createdReview,
     });
-  } catch {
-    res.json({
+  } catch (error) {
+    res.status(400).json({
       result: "error",
       errMessage: "ERROR: failed to create review...",
     });

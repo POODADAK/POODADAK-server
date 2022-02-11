@@ -4,7 +4,7 @@ const router = express.Router();
 const { saveReview, editReview } = require("../controller/reviewController");
 const verifyPoodadakToken = require("../middlewares/verifyPoodadakToken");
 
-router.post("/review", verifyPoodadakToken, saveReview);
-router.post("/review/:id", verifyPoodadakToken, editReview);
+router.post("/", verifyPoodadakToken, saveReview);
+router.post("/:id", verifyPoodadakToken, editReview);
 
 module.exports = router;
