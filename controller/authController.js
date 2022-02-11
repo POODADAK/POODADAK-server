@@ -16,6 +16,8 @@ function createAndSendToken(user, res) {
   const cookieOptions = {
     expires: new Date(Date.now() + Number(process.env.JWT_EXPIRE_TIME)),
     httpOnly: true,
+    sameSite: "none",
+    secure: true,
   };
 
   res.cookie("POODADAK_TOKEN", token, cookieOptions);
@@ -189,7 +191,12 @@ exports.signinNaver = async (req, res, next) => {
 };
 
 exports.eraseCookie = (req, res, next) => {
-  res.clearCookie("POODADAK_TOKEN");
+  const cookieOptions = {
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+  };
+  res.clearCookie("POODADAK_TOKEN", cookieOptions);
   res.json({
     result: "deleted",
   });

@@ -11,6 +11,7 @@ const logger = require("morgan");
 
 const authRouter = require("./routes/authRouter");
 const reviewRouter = require("./routes/reviewRouter");
+const s3Router = require("./routes/s3Router");
 const toiletsRouter = require("./routes/toiletsRouter");
 
 const corsOptions = {
@@ -31,5 +32,6 @@ app.use(cors(corsOptions));
 app.use("/auth", authRouter);
 app.use("/toilets", toiletsRouter);
 app.use("/review", reviewRouter);
+app.use("/s3Url", s3Router);
 
 module.exports = app;
