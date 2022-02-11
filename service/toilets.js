@@ -2,7 +2,15 @@
 // eslint-disable-next-line no-unused-vars
 const Review = require("../model/Review");
 const Toilet = require("../model/Toilet");
+// eslint-disable-next-line no-unused-vars
+const User = require("../model/User");
 
 exports.getReviews = async function (id) {
-  return await Toilet.findById(id).populate("reviewList");
+  const { reviewList } = await Toilet.findById(id).populate("reviewList");
+
+  for (const review of reviewList) {
+    await review.populate("writer");
+  }
+
+  return reviewList;
 };
