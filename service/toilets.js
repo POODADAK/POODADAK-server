@@ -14,3 +14,7 @@ exports.getReviews = async function (id) {
 
   return reviewList;
 };
+
+exports.SOSUpdate = async function (id, option) {
+  return await Toilet.findByIdAndUpdate(id, { isSOS: option });
+};
