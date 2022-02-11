@@ -22,7 +22,7 @@ exports.getNearToiletsList = async (req, res, next) => {
 exports.getReviewsList = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const { reviewList } = await getReviews(id);
+    const reviewList = await getReviews(id);
 
     res.json({
       result: "ok",
