@@ -1,26 +1,40 @@
-const { createReview, updateReview } = require("../service/review");
+const {
+  createReview,
+  updateReview,
+  findReviewById,
+} = require("../service/review");
+const {
+  updateLatestToiletPaperInfoById,
+  addReviewtoToilet,
+} = require("../service/toilets");
+
+exports.getReview = async (req, res, next) => {
+  try {
+    const reviewId = req.params.id;
+    const existingReview = await findReviewById(reviewId);
+
+    res.json(existingReview);
+  } catch (error) {
+    next(error);
+  }
+};
 
 exports.saveReview = async (req, res, next) => {
   try {
-    const {
-      toilet,
-      rating,
-      description,
-      image,
-      didToiletPaperExist,
-      updatedAt,
-    } = req.body;
+    const { toilet, rating, description, image, isToiletPaper, updatedAt } =
+      req.body;
     const submittedReview = {
       writer: req.userInfo._id,
       toilet,
       rating,
       description,
       image,
-      didToiletPaperExist,
       updatedAt,
     };
 
     const createdReview = await createReview(submittedReview);
+    await updateLatestToiletPaperInfoById(toilet, isToiletPaper);
+    await addReviewtoToilet(toilet, createdReview._id);
 
     res.json({
       result: "ok",
@@ -35,33 +49,28 @@ exports.saveReview = async (req, res, next) => {
 };
 
 exports.editReview = async (req, res, next) => {
+  const reviewId = req.params.id;
+
   try {
-    const {
-      toilet,
-      rating,
-      description,
-      image,
-      didToiletPaperExist,
-      updatedAt,
-      reviewId,
-    } = req.data;
+    const { toilet, rating, description, image, isToiletPaper, updatedAt } =
+      req.body;
     const submittedReview = {
       toilet,
       rating,
       description,
       image,
-      didToiletPaperExist,
+      isToiletPaper,
       updatedAt,
     };
 
-    const updatedReview = await updateReview(reviewId, submittedReview);
+    await updateReview(reviewId, submittedReview);
+    await updateLatestToiletPaperInfoById(toilet, isToiletPaper);
 
     res.json({
       result: "ok",
-      review: updatedReview,
     });
-  } catch {
-    res.json({
+  } catch (error) {
+    res.status(400).json({
       result: "error",
       errMessage: "ERROR: failed to update review...",
     });
