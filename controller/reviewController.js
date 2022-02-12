@@ -49,7 +49,7 @@ exports.saveReview = async (req, res, next) => {
 };
 
 exports.editReview = async (req, res, next) => {
-  const reviewId = req.params.id;
+  const { reviewId } = req.params;
 
   try {
     const { toilet, rating, description, image, isToiletPaper, updatedAt } =

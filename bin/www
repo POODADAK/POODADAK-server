@@ -3,7 +3,7 @@ const http = require("http");
 const debug = require("debug")("poodadak-server:server");
 
 const app = require("../app");
-const socketAPI = require("../socketAPI");
+const socketAPI = require("../config/socketAPI");
 
 const port = normalizePort(process.env.PORT || "8000");
 
