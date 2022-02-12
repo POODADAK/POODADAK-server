@@ -4,6 +4,6 @@ const router = express.Router();
 const { getReviewsList, postSOS } = require("../controller/toiletsController");
 
 router.get("/review/:id", getReviewsList);
-router.post("/occurSOS", postSOS);
+router.post("/emitSOS", postSOS);
 
 module.exports = router;
