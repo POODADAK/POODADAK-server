@@ -8,7 +8,7 @@ const {
 } = require("../controller/reviewController");
 const verifyPoodadakToken = require("../middlewares/verifyPoodadakToken");
 
-router.get("/:id", getReview);
+router.get("/:reviewId", getReview);
 
 router.post("/", verifyPoodadakToken, saveReview);
 router.post("/:id", verifyPoodadakToken, editReview);

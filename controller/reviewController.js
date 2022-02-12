@@ -10,7 +10,7 @@ const {
 
 exports.getReview = async (req, res, next) => {
   try {
-    const reviewId = req.params.id;
+    const { reviewId } = req.params;
     const existingReview = await findReviewById(reviewId);
 
     res.json(existingReview);
