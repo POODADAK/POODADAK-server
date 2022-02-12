@@ -21,7 +21,7 @@ exports.getReview = async (req, res, next) => {
 
 exports.saveReview = async (req, res, next) => {
   try {
-    const { toilet, rating, description, image, isToiletPaper, updatedAt } =
+    const { toilet, rating, description, image, hasToiletPaper, updatedAt } =
       req.body;
     const submittedReview = {
       writer: req.userInfo._id,
@@ -33,7 +33,7 @@ exports.saveReview = async (req, res, next) => {
     };
 
     const createdReview = await createReview(submittedReview);
-    await updateLatestToiletPaperInfoById(toilet, isToiletPaper);
+    await updateLatestToiletPaperInfoById(toilet, hasToiletPaper);
     await addReviewtoToilet(toilet, createdReview._id);
 
     res.json({
@@ -52,19 +52,19 @@ exports.editReview = async (req, res, next) => {
   const reviewId = req.params.id;
 
   try {
-    const { toilet, rating, description, image, isToiletPaper, updatedAt } =
+    const { toilet, rating, description, image, hasToiletPaper, updatedAt } =
       req.body;
     const submittedReview = {
       toilet,
       rating,
       description,
       image,
-      isToiletPaper,
+      hasToiletPaper,
       updatedAt,
     };
 
     await updateReview(reviewId, submittedReview);
-    await updateLatestToiletPaperInfoById(toilet, isToiletPaper);
+    await updateLatestToiletPaperInfoById(toilet, hasToiletPaper);
 
     res.json({
       result: "ok",

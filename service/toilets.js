@@ -34,12 +34,12 @@ exports.SOSUpdate = async function (id, option) {
   return await Toilet.findByIdAndUpdate(id, { isSOS: option });
 };
 
-exports.updateLatestToiletPaperInfoById = async function (id, isToiletPaper) {
+exports.updateLatestToiletPaperInfoById = async function (id, hasToiletPaper) {
   return await Toilet.findByIdAndUpdate(id, {
     $set: {
       latestToiletPaperInfo: {
         lastDate: new Date().toISOString(),
-        isToiletPaper,
+        hasToiletPaper,
       },
     },
   });
