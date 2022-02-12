@@ -18,3 +18,20 @@ exports.getReviews = async function (id) {
 exports.SOSUpdate = async function (id, option) {
   return await Toilet.findByIdAndUpdate(id, { isSOS: option });
 };
+
+exports.updateLatestToiletPaperInfoById = async function (id, isToiletPaper) {
+  return await Toilet.findByIdAndUpdate(id, {
+    $set: {
+      latestToiletPaperInfo: {
+        lastDate: new Date().toISOString(),
+        isToiletPaper,
+      },
+    },
+  });
+};
+
+exports.addReviewtoToilet = async function (toiletId, reviewId) {
+  return await Toilet.findByIdAndUpdate(toiletId, {
+    $addToSet: { reviewList: reviewId },
+  });
+};
