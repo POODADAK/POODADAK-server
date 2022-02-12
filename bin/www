@@ -1,39 +1,27 @@
-#!/usr/bin/env node
-
-/**
- * Module dependencies.
- */
-
 const http = require("http");
 
 const debug = require("debug")("poodadak-server:server");
 
 const app = require("../app");
-
-/**
- * Get port from environment and store in Express.
- */
+const socketAPI = require("../socketAPI");
 
 const port = normalizePort(process.env.PORT || "8000");
-app.set("port", port);
 
-/**
- * Create HTTP server.
- */
+app.set("port", port);
 
 const server = http.createServer(app);
 
-/**
- * Listen on provided port, on all network interfaces.
- */
+socketAPI.io.attach(server, {
+  serveClient: false,
+  cors: {
+    origin: process.env.CORS_ORIGIN_URL,
+    credentials: true,
+  },
+});
 
 server.listen(port);
 server.on("error", onError);
 server.on("listening", onListening);
-
-/**
- * Normalize a port into a number, string, or false.
- */
 
 function normalizePort(val) {
   const port = parseInt(val, 10);
@@ -50,10 +38,6 @@ function normalizePort(val) {
 
   return false;
 }
-
-/**
- * Event listener for HTTP server "error" event.
- */
 
 function onError(error) {
   if (error.syscall !== "listen") {
@@ -78,10 +62,6 @@ function onError(error) {
       throw error;
   }
 }
-
-/**
- * Event listener for HTTP server "listening" event.
- */
 
 function onListening() {
   const addr = server.address();
