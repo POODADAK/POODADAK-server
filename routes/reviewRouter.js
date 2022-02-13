@@ -11,6 +11,6 @@ const verifyPoodadakToken = require("../middlewares/verifyPoodadakToken");
 router.get("/:reviewId", getReview);
 
 router.post("/", verifyPoodadakToken, saveReview);
-router.post("/:id", verifyPoodadakToken, editReview);
+router.post("/:reviewId", verifyPoodadakToken, editReview);
 
 module.exports = router;

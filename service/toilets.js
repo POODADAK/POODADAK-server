@@ -35,10 +35,6 @@ exports.getReviews = async function (id) {
   return reviewList;
 };
 
-exports.SOSUpdate = async function (id, option) {
-  return await Toilet.findByIdAndUpdate(id, { isSOS: option });
-};
-
 exports.updateLatestToiletPaperInfoById = async function (id, hasToiletPaper) {
   return await Toilet.findByIdAndUpdate(id, {
     $set: {
@@ -55,3 +51,5 @@ exports.addReviewtoToilet = async function (toiletId, reviewId) {
     $addToSet: { reviewList: reviewId },
   });
 };
+
+exports.checkSOS;
