@@ -1,4 +1,4 @@
-const { getNearToilets, getReviews, SOSUpdate } = require("../service/toilets");
+const { getNearToilets, getReviews } = require("../service/toilets");
 
 exports.getNearToiletsList = async (req, res, next) => {
   const { lat, lng } = req.query;
@@ -12,7 +12,7 @@ exports.getNearToiletsList = async (req, res, next) => {
 
     return;
   } catch (error) {
-    res.json({
+    res.status(400).json({
       result: "error",
       errMessage: "ERROR: fail to get toilets...",
     });
@@ -29,20 +29,9 @@ exports.getReviewsList = async (req, res, next) => {
 
     return;
   } catch (error) {
-    next(error);
-  }
-};
-
-exports.postSOS = async (req, res, next) => {
-  const { toilet_id, SOSState } = req.body;
-
-  try {
-    const response = await SOSUpdate(toilet_id, SOSState);
-
-    res.json({ result: "ok", response });
-
-    return;
-  } catch (error) {
-    next(error);
+    res.status(400).json({
+      result: "error",
+      errMessage: "ERROR: fail to get reviewList...",
+    });
   }
 };

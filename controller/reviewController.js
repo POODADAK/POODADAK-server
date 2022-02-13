@@ -15,7 +15,10 @@ exports.getReview = async (req, res, next) => {
 
     res.json(existingReview);
   } catch (error) {
-    next(error);
+    res.status(400).json({
+      result: "error",
+      errMessage: "ERROR: failed to find review...",
+    });
   }
 };
 
