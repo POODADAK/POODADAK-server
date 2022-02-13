@@ -13,7 +13,7 @@ exports.findReviewById = async (reviewId) => {
   ).lean();
 
   return {
-    isToiletPaper: latestToiletPaperInfo?.isToiletPaper ? true : false,
+    hasToiletPaper: latestToiletPaperInfo?.hasToiletPaper ? true : false,
     ...review,
   };
 };

@@ -22,11 +22,17 @@ const toiletSchema = new mongoose.Schema({
   phoneNumber: String,
   openTime: String,
   installationYear: Number,
-  referenceDate: Date,
+  referenceDate: String,
   institutionCode: Number,
   latestToiletPaperInfo: {
-    lastDate: { type: String },
-    isToiletPaper: { type: Boolean },
+    lastDate: {
+      type: String,
+      default: "없 음",
+    },
+    hasToiletPaper: {
+      type: Boolean,
+      default: false,
+    },
   },
   location: {
     type: {

@@ -30,12 +30,13 @@ exports.getReviews = async function (id) {
   return reviewList;
 };
 
+
 exports.updateLatestToiletPaperInfoById = async function (id, isToiletPaper) {
   return await Toilet.findByIdAndUpdate(id, {
     $set: {
       latestToiletPaperInfo: {
         lastDate: new Date().toISOString(),
-        isToiletPaper,
+        hasToiletPaper,
       },
     },
   });
