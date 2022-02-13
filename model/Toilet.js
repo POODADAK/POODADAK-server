@@ -40,10 +40,6 @@ const toiletSchema = new mongoose.Schema({
       required: true,
     },
   },
-  // isSOS: {
-  //   type: Boolean,
-  //   default: false,
-  // },
   reviewList: {
     type: [mongoose.ObjectId],
     ref: "Review",
