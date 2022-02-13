@@ -15,7 +15,10 @@ exports.getReview = async (req, res, next) => {
 
     res.json(existingReview);
   } catch (error) {
-    next(error);
+    res.status(400).json({
+      result: "error",
+      errMessage: "ERROR: failed to find review...",
+    });
   }
 };
 
@@ -49,7 +52,7 @@ exports.saveReview = async (req, res, next) => {
 };
 
 exports.editReview = async (req, res, next) => {
-  const reviewId = req.params.id;
+  const { reviewId } = req.params;
 
   try {
     const { toilet, rating, description, image, hasToiletPaper, updatedAt } =
