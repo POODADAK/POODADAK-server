@@ -1,9 +1,4 @@
-// populate할때 사용됨.
-// eslint-disable-next-line no-unused-vars
-const Review = require("../model/Review");
 const Toilet = require("../model/Toilet");
-// eslint-disable-next-line no-unused-vars
-const User = require("../model/User");
 
 exports.getNearToilets = async function (lat, lng) {
   return await Toilet.find({
