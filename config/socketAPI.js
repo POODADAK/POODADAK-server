@@ -2,7 +2,10 @@ const io = require("socket.io")();
 
 const verifyPoodadakTokenSocket = require("../middlewares/verifyPoodadakTokenSocket");
 const Chatroom = require("../model/Chatroom");
+const Toilet = require("../model/Toilet");
+const { updateSOS } = require("../service/toilets");
 const ERROR_MESSAGES = require("../utils/constants");
+const { THIRTY_MINUTES } = require("../utils/constants").MINUTE_TO_MILLISECONDS;
 const ErrorWithStatus = require("../utils/ErrorwithStatus");
 
 const socketAPI = {
@@ -15,22 +18,27 @@ toiletChatList.use(verifyPoodadakTokenSocket);
 
 toiletChatList.on("connection", async (socket) => {
   const toiletId = socket.nsp.name.split("-")[1];
-  let createdChatroomDocument;
+  const userId = socket.userId;
+  let chatroomId;
 
-  socket.join(socket.userId);
+  socket.join(userId);
 
   // eslint-disable-next-line no-console
   console.log(
-    `User ${socket.id} connected to namespace 🚽toiletId-${toiletId} and joined 🚪room ${socket.userId}`
+    `User ${socket.id} ❗️connected to namespace 🚽toiletId-${toiletId} and joined 🚪room ${userId}`
   );
 
   try {
-    //소켓이 연결되면 DB에 chatroom 도큐먼트 생성.
-    createdChatroomDocument = await Chatroom.create({
-      owner: socket.userId,
+    const createdChatroom = await Chatroom.create({
+      owner: userId,
       toilet: toiletId,
       isLive: true,
     });
+
+    await Toilet.findByIdAndUpdate(toiletId, { isSOS: true });
+
+    chatroomId = createdChatroom._id;
+    socket.emit("createChatroom", chatroomId);
   } catch (error) {
     socket.emit(
       "db-error",
@@ -40,26 +48,55 @@ toiletChatList.on("connection", async (socket) => {
         ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
       ).toPlainSocketErrorObject()
     );
+    socket.disconnect(true);
   }
 
-  //채팅이 30분간 없으면 채팅창 종료.
   let timerId = setTimeout(async () => {
     socket.disconnect(true);
-    //소켓연결이 끊길때 해당 chatroom 도큐먼트 isLive 업데이트
-    if (createdChatroomDocument) {
-      createdChatroomDocument.update({ isLive: false });
-    }
-  }, 2000);
+  }, THIRTY_MINUTES);
 
-  socket.on("sendMessage", () => {
-    //채팅이 생길경우 채팅창 종료시간 연장.
+  socket.on("loadChatList", async (chatroomId) => {
+    const { chatList } = await Chatroom.findById(chatroomId, "chatList");
+    // console.log("!!!cl", chatList);
+    socket.emit("findChatList", chatList);
+  });
+
+  socket.on("sendChat", async (payload) => {
     clearTimeout(timerId);
+
     timerId = setTimeout(async () => {
       socket.disconnect(true);
-      if (createdChatroomDocument) {
-        createdChatroomDocument.update({ isLive: false });
+    }, THIRTY_MINUTES);
+
+    // console.log("rc", payload);
+    await Chatroom.findByIdAndUpdate(chatroomId, {
+      $push: { chatList: payload },
+    });
+
+    socket.broadcast.to(userId).emit("receiveChat", payload);
+  });
+
+  socket.on("disconnect", async () => {
+    try {
+      if (chatroomId) {
+        const chatList = await Chatroom.findById(chatroomId, "chatList");
+
+        if (!chatList.length) {
+          await Chatroom.findByIdAndDelete(chatroomId);
+        } else {
+          await Chatroom.findByIdAndUpdate(chatroomId, { isLive: false });
+        }
       }
-    }, 1800000);
+      await updateSOS(toiletId);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB);
+    }
+
+    // eslint-disable-next-line no-console
+    console.log(
+      `User ${socket.id} ❌ disconnected from namespace 🚽toiletId-${toiletId} and left 🚪room ${userId}`
+    );
   });
 });
 
