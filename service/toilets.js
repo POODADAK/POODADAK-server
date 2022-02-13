@@ -21,11 +21,16 @@ exports.getNearToilets = async function (lat, lng) {
 };
 
 exports.getReviews = async function (id) {
-  const { reviewList } = await Toilet.findById(id).populate("reviewList");
-
-  for (const review of reviewList) {
-    await review.populate("writer");
-  }
+  const { reviewList } = await Toilet.findById(id)
+    .populate({
+      path: "reviewList",
+      populate: { path: "toilet", model: "Toilet" },
+    })
+    .populate({
+      path: "reviewList",
+      populate: { path: "writer", model: "User" },
+    })
+    .lean();
 
   return reviewList;
 };
