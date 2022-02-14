@@ -2,12 +2,14 @@ const {
   createReview,
   updateReview,
   findReviewById,
+  deleteReviewById,
 } = require("../service/review");
 const {
   updateLatestToiletPaperInfoById,
   addReviewtoToilet,
+  deleteReviewByToiletId,
 } = require("../service/toilets");
-const { addReviewToUser } = require("../service/user");
+const { addReviewToUser, deleteReviewByUserId } = require("../service/user");
 
 exports.getReview = async (req, res, next) => {
   try {
@@ -78,6 +80,25 @@ exports.editReview = async (req, res, next) => {
     res.status(400).json({
       result: "error",
       errMessage: "ERROR: failed to update review...",
+    });
+  }
+};
+
+exports.deleteReview = async (req, res, next) => {
+  const { reviewId } = req.params;
+
+  try {
+    const { writer, toilet } = await deleteReviewById(reviewId);
+    await deleteReviewByToiletId(toilet, reviewId);
+    await deleteReviewByUserId(writer, reviewId);
+
+    res.json({
+      result: "ok",
+    });
+  } catch (error) {
+    res.status(400).json({
+      result: "error",
+      errMessage: "ERROR: failed to delete review...",
     });
   }
 };

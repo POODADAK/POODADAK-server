@@ -18,3 +18,9 @@ exports.addReviewToUser = async function (userId, reviewId) {
     { $push: { reviewList: reviewId } }
   );
 };
+
+exports.deleteReviewByUserId = async function (userId, reviewId) {
+  return await User.findByIdAndUpdate(userId, {
+    $pull: { reviewList: reviewId },
+  });
+};
