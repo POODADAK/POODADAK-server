@@ -55,6 +55,10 @@ const toiletSchema = new mongoose.Schema({
     ref: "ChatRoom",
     default: [],
   },
+  isSOS: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 toiletSchema.index({ location: "2dsphere" });

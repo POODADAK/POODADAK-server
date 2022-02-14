@@ -8,3 +8,7 @@ exports.ERROR_MESSAGES = {
   FAILED_TO_ESTABLISH_SOCKET_CONNECTION:
     "Cannot establish socket connection either by authentication error or db error.",
 };
+
+exports.MINUTE_TO_MILLISECONDS = {
+  THIRTY_MINUTES: 1800000,
+};

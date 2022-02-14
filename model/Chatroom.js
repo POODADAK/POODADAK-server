@@ -10,7 +10,7 @@ const chatroomSchema = new mongoose.Schema({
     type: mongoose.ObjectId,
     ref: "User",
   },
-  chat: {
+  chatList: {
     type: [
       {
         sender: mongoose.ObjectId,
