@@ -7,6 +7,7 @@ const {
   updateLatestToiletPaperInfoById,
   addReviewtoToilet,
 } = require("../service/toilets");
+const { addReviewToUser } = require("../service/user");
 
 exports.getReview = async (req, res, next) => {
   try {
@@ -38,6 +39,7 @@ exports.saveReview = async (req, res, next) => {
     const createdReview = await createReview(submittedReview);
     await updateLatestToiletPaperInfoById(toilet, hasToiletPaper);
     await addReviewtoToilet(toilet, createdReview._id);
+    await addReviewToUser(req.userInfo._id, createdReview._id);
 
     res.json({
       result: "ok",
