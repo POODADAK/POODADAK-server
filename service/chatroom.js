@@ -12,3 +12,16 @@ exports.findLiveChatroomByToilet = async (toiletId, userId) => {
 
   return { liveChatList, isMyChat };
 };
+
+exports.findLiveChatroomList = async (userId) => {
+  const liveChatList = await Chatroom.find({ isLive: true });
+  const myChatroomList = [];
+
+  for (const liveChat of liveChatList) {
+    if (String(liveChat.owner) === String(userId)) {
+      myChatroomList.push(liveChat);
+    }
+  }
+
+  return myChatroomList;
+};
