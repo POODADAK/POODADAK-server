@@ -28,7 +28,7 @@ exports.RESPONSE_RESULT = {
   ERROR: "error",
   OK: "ok",
   TOKEN_DELETED: "Poodadak Token deleted",
-  VERIFIED: "Poodadak Token Verified",
+  VERIFIED: "verified",
   NO_TOKEN: "no token",
   NO_USER: "no user",
 };
