@@ -1,13 +1,21 @@
 const generateS3UploadURL = require("../config/s3");
+const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../utils/constants");
+const ErrorWithStatus = require("../utils/ErrorwithStatus");
 
 exports.getS3Url = async (req, res, next) => {
   try {
     const url = await generateS3UploadURL();
-    res.json({ s3Url: url });
+    res.json({ result: RESPONSE_RESULT.OK, s3Url: url });
+
+    return;
   } catch (error) {
-    res.status(400).json({
-      result: "error",
-      errMessage: "ERROR: fail to get s3URL...",
-    });
+    next(
+      new ErrorWithStatus(
+        error,
+        500,
+        RESPONSE_RESULT.ERROR,
+        ERROR_MESSAGES.FAILED_TO_GET_S3_URL
+      )
+    );
   }
 };

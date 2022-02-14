@@ -1,4 +1,6 @@
 const { findReviewByUserId } = require("../service/profile");
+const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../utils/constants");
+const ErrorWithStatus = require("../utils/ErrorwithStatus");
 
 exports.getUserProfile = async (req, res, next) => {
   const { userId } = req.params;
@@ -10,9 +12,13 @@ exports.getUserProfile = async (req, res, next) => {
 
     return;
   } catch (error) {
-    res.json({
-      result: "error",
-      errMessage: "ERROR: fail to get userProfile...",
-    });
+    next(
+      new ErrorWithStatus(
+        error,
+        500,
+        RESPONSE_RESULT.ERROR,
+        ERROR_MESSAGES.FAILED_TO_GET_USER_PROFILE
+      )
+    );
   }
 };
