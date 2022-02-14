@@ -2,8 +2,15 @@ const url = require("url");
 
 const axios = require("axios");
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 
 const { createUser, getUser } = require("../service/user");
+const {
+  ERROR_MESSAGES,
+  RESPONSE_RESULT,
+  SOCIAL_SERVICE,
+} = require("../utils/constants");
+const ErrorWithStatus = require("../utils/ErrorwithStatus");
 
 function signToken(id) {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -22,7 +29,7 @@ function createAndSendToken(user, res) {
 
   res.cookie("POODADAK_TOKEN", token, cookieOptions);
   res.json({
-    result: "ok",
+    result: RESPONSE_RESULT.OK,
     userId: user._id,
   });
 
@@ -30,7 +37,7 @@ function createAndSendToken(user, res) {
 }
 
 exports.signinKakao = async (req, res, next) => {
-  const socialService = "KAKAO";
+  const socialService = SOCIAL_SERVICE.KAKAO;
 
   try {
     const params = new url.URLSearchParams({
@@ -65,10 +72,14 @@ exports.signinKakao = async (req, res, next) => {
         }
       );
 
-      res.status(401).json({
-        result: "error",
-        errMessage: "Please, login again, select email & nickname too...",
-      });
+      next(
+        new ErrorWithStatus(
+          null,
+          401,
+          RESPONSE_RESULT.ERROR,
+          ERROR_MESSAGES.USER_DID_NOT_APPROVE_NECESSARY_INFO
+        )
+      );
 
       return;
     }
@@ -78,7 +89,7 @@ exports.signinKakao = async (req, res, next) => {
         '["kakao_account.email", "kakao_account.profile.nickname"]',
     });
 
-    const fetchUserInfoResponse = await axios.post(
+    const fetchedUserInfo = await axios.post(
       process.env.KAKAO_REST_API_FETCH_USER_INFO_URL,
       fetchUserUrlParams.toString(),
       {
@@ -90,14 +101,14 @@ exports.signinKakao = async (req, res, next) => {
     );
 
     let currentUser = await getUser({
-      email: fetchUserInfoResponse.data.kakao_account.email,
+      email: fetchedUserInfo.data.kakao_account.email,
       socialService,
     });
 
     if (!currentUser) {
       const newUser = {
-        username: fetchUserInfoResponse.data.kakao_account.profile.nickname,
-        email: fetchUserInfoResponse.data.kakao_account.email,
+        username: fetchedUserInfo.data.kakao_account.profile.nickname,
+        email: fetchedUserInfo.data.kakao_account.email,
         socialService,
       };
 
@@ -106,20 +117,28 @@ exports.signinKakao = async (req, res, next) => {
 
     createAndSendToken(currentUser, res);
   } catch (error) {
-    next(error);
+    const errMessage =
+      error instanceof mongoose.Error
+        ? ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
+        : ERROR_MESSAGES.FAILED_TO_AUTHENTICATE_KAKAO;
+
+    next(new ErrorWithStatus(error, 500, RESPONSE_RESULT.ERROR, errMessage));
   }
 };
 
 exports.signinNaver = async (req, res, next) => {
-  const socialService = "NAVER";
+  const socialService = SOCIAL_SERVICE.NAVER;
   const { code, state } = req.body;
 
   if (!code || !state) {
-    res.status(401).json({
-      result: "error",
-      errMessage:
-        "ERROR: fail to authenticate from Naver server with your data.",
-    });
+    next(
+      new ErrorWithStatus(
+        null,
+        401,
+        RESPONSE_RESULT.ERROR,
+        ERROR_MESSAGES.FAILED_TO_AUTHENTICATE_NAVER
+      )
+    );
 
     return;
   }
@@ -166,10 +185,14 @@ exports.signinNaver = async (req, res, next) => {
         }
       );
 
-      res.status(401).json({
-        result: "error",
-        errMessage: "Please, login again, select email & nickname too...",
-      });
+      next(
+        new ErrorWithStatus(
+          null,
+          401,
+          RESPONSE_RESULT.ERROR,
+          ERROR_MESSAGES.USER_DID_NOT_APPROVE_NECESSARY_INFO
+        )
+      );
 
       return;
     }
@@ -182,12 +205,18 @@ exports.signinNaver = async (req, res, next) => {
         email,
         socialService,
       };
+
       userInfo = await createUser(newUser);
     }
 
     createAndSendToken(userInfo, res);
   } catch (error) {
-    next(error);
+    const errMessage =
+      error instanceof mongoose.Error
+        ? ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
+        : ERROR_MESSAGES.FAILED_TO_AUTHENTICATE_KAKAO;
+
+    next(new ErrorWithStatus(error, 500, RESPONSE_RESULT.ERROR, errMessage));
   }
 };
 
@@ -197,15 +226,16 @@ exports.eraseCookie = (req, res, next) => {
     sameSite: "none",
     secure: true,
   };
+
   res.clearCookie("POODADAK_TOKEN", cookieOptions);
   res.json({
-    result: "deleted",
+    result: RESPONSE_RESULT.TOKEN_DELETED,
   });
 };
 
 exports.sendVerified = (req, res, next) => {
   res.json({
-    result: "verified",
+    result: RESPONSE_RESULT.VERIFIED,
     userId: req.userInfo._id,
   });
 };
