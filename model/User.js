@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
   },
   reviewList: {
     type: [mongoose.ObjectId],
-    ref: "Reviews",
+    ref: "Review",
   },
   currentChatRoom: {
     type: mongoose.ObjectId,

@@ -11,6 +11,7 @@ const logger = require("morgan");
 
 const authRouter = require("./routes/authRouter");
 const chatroomRouter = require("./routes/chatroomRouter");
+const profileRouter = require("./routes/profileRouter");
 const reviewRouter = require("./routes/reviewRouter");
 const s3Router = require("./routes/s3Router");
 const toiletsRouter = require("./routes/toiletsRouter");
@@ -35,5 +36,6 @@ app.use("/toilets", toiletsRouter);
 app.use("/review", reviewRouter);
 app.use("/chatroom", chatroomRouter);
 app.use("/s3Url", s3Router);
+app.use("/profile", profileRouter);
 
 module.exports = app;

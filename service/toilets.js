@@ -3,8 +3,6 @@ const ChatRoom = require("../model/Chatroom");
 // eslint-disable-next-line no-unused-vars
 const Review = require("../model/Review");
 const Toilet = require("../model/Toilet");
-// eslint-disable-next-line no-unused-vars
-const User = require("../model/User");
 
 exports.getNearToilets = async function (lat, lng) {
   return await Toilet.find({
@@ -22,11 +20,16 @@ exports.getNearToilets = async function (lat, lng) {
 };
 
 exports.getReviews = async function (id) {
-  const { reviewList } = await Toilet.findById(id).populate("reviewList");
-
-  for (const review of reviewList) {
-    await review.populate("writer");
-  }
+  const { reviewList } = await Toilet.findById(id)
+    .populate({
+      path: "reviewList",
+      populate: { path: "toilet", model: "Toilet" },
+    })
+    .populate({
+      path: "reviewList",
+      populate: { path: "writer", model: "User" },
+    })
+    .lean();
 
   return reviewList;
 };
