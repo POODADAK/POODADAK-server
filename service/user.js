@@ -11,3 +11,10 @@ exports.createUser = async function (newUser) {
 exports.getUserById = async function (id) {
   return await User.findById(id);
 };
+
+exports.addReviewToUser = async function (userId, reviewId) {
+  return await User.findByIdAndUpdate(
+    { _id: userId },
+    { $push: { reviewList: reviewId } }
+  );
+};
