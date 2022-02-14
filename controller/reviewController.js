@@ -112,12 +112,18 @@ exports.deleteReview = async (req, res, next) => {
     await deleteReviewByUserId(writer, reviewId);
 
     res.json({
-      result: "ok",
+      result: RESPONSE_RESULT.OK,
     });
+
+    return;
   } catch (error) {
-    res.status(400).json({
-      result: "error",
-      errMessage: "ERROR: failed to delete review...",
-    });
+    next(
+      new ErrorWithStatus(
+        error,
+        500,
+        RESPONSE_RESULT.ERROR,
+        ERROR_MESSAGES.FAILED_TO_UPDATE_REVIEW
+      )
+    );
   }
 };
