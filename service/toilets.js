@@ -1,3 +1,7 @@
+// populate할때 사용됨.
+const ChatRoom = require("../model/Chatroom");
+// eslint-disable-next-line no-unused-vars
+const Review = require("../model/Review");
 const Toilet = require("../model/Toilet");
 
 exports.getNearToilets = async function (lat, lng) {
@@ -47,4 +51,13 @@ exports.addReviewtoToilet = async function (toiletId, reviewId) {
   });
 };
 
-exports.checkSOS;
+exports.updateSOS = async function (toiletId) {
+  const liveChatList = await ChatRoom.find({ toilet: toiletId, isLive: true });
+  // console.log("why", liveChatList, !!liveChatList.length);
+  const isLiveChat = !!liveChatList.length;
+
+  if (!isLiveChat) {
+    await Toilet.findByIdAndUpdate(toiletId, { isSOS: false });
+    return;
+  }
+};

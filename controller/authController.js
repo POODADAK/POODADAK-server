@@ -23,6 +23,7 @@ function createAndSendToken(user, res) {
   res.cookie("POODADAK_TOKEN", token, cookieOptions);
   res.json({
     result: "ok",
+    userId: user._id,
   });
 
   return;
@@ -205,5 +206,6 @@ exports.eraseCookie = (req, res, next) => {
 exports.sendVerified = (req, res, next) => {
   res.json({
     result: "verified",
+    userId: req.userInfo._id,
   });
 };
