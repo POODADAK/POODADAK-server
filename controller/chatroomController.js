@@ -1,7 +1,4 @@
-const {
-  findLiveChatroomByToilet,
-  findLiveChatroomList,
-} = require("../service/chatroom");
+const { findLiveChatroomByToilet } = require("../service/chatroom");
 
 exports.checkLiveChatroom = async (req, res, next) => {
   const { toiletId } = req.query;
@@ -18,24 +15,6 @@ exports.checkLiveChatroom = async (req, res, next) => {
     res.status(400).json({
       result: "error",
       errMessage: "ERROR: fail to check Live chatroom from DB...",
-    });
-  }
-};
-
-exports.getLiveChatroomList = async (req, res, next) => {
-  const { userId } = req.params;
-
-  try {
-    const liveChatRoomList = await findLiveChatroomList(userId);
-
-    res.json({
-      result: "ok",
-      liveChatRoomList,
-    });
-  } catch (error) {
-    res.status(400).json({
-      result: "error",
-      errMessage: "ERROR: fail to find Live chatroom List from DB...",
     });
   }
 };
