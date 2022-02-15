@@ -1,15 +1,9 @@
 const Chatroom = require("../../model/Chatroom");
-const { THIRTY_MINUTES } =
-  require("../../utils/constants").MINUTE_TO_MILLISECONDS;
 const ERROR_MESSAGES = require("../../utils/constants");
 const ErrorWithStatus = require("../../utils/ErrorwithStatus");
 
 function registerSendChat(socket, chatroomId) {
   const roomName = socket.handshake.query.room;
-
-  let timerId = setTimeout(async () => {
-    socket.disconnect(true);
-  }, THIRTY_MINUTES);
 
   socket.on("sendChat", async (chat) => {
     const isChatEmpty = !chat.message.trim().length;
@@ -17,13 +11,6 @@ function registerSendChat(socket, chatroomId) {
     if (isChatEmpty) {
       return;
     }
-
-    clearTimeout(timerId);
-
-    timerId = setTimeout(async () => {
-      socket.emit("chatTimeout");
-      socket.disconnect(true);
-    }, THIRTY_MINUTES);
 
     try {
       const existingChatroom = await Chatroom.findByIdAndUpdate(chatroomId, {

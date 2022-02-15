@@ -20,6 +20,7 @@ exports.ERROR_MESSAGES = {
   FAILED_TO_GET_S3_URL: "ERROR: fail to get s3URL...",
   FAILED_TO_GET_TOILET: "ERROR: fail to get toilet...",
   FAILED_TO_GET_REVIEW_LIST: "ERROR: fail to get reviewList...",
+  FAILED_TO_CREATE_CHATROOM: "ERROR: fail to create chatroom...",
   USER_DID_NOT_APPROVE_NECESSARY_INFO:
     "ERROR: Please, login again, select email & nickname too.",
   FAILED_TO_VERIFY_TOKEN: "ERROR: Cannot verify your token.",

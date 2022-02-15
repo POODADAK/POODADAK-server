@@ -28,7 +28,7 @@ const chatroomSchema = new mongoose.Schema({
   },
   isLive: {
     type: Boolean,
-    isRequired: true,
+    default: true,
   },
 });
 
