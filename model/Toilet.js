@@ -50,11 +50,6 @@ const toiletSchema = new mongoose.Schema({
     type: [mongoose.ObjectId],
     ref: "Review",
   },
-  chatRoomList: {
-    type: [mongoose.ObjectId],
-    ref: "ChatRoom",
-    default: [],
-  },
   isSOS: {
     type: Boolean,
     default: false,

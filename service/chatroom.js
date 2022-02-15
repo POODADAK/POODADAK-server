@@ -5,13 +5,18 @@ exports.findLiveChatroomListByToilet = async (toiletId, userId) => {
     toilet: toiletId,
     isLive: true,
   });
-  let isMyChat = false;
 
-  for (const liveChat of liveChatroomList) {
-    if (String(liveChat.owner) === String(userId)) {
-      isMyChat = true;
+  let myChatroom = null;
+
+  for (let i = 0; i < liveChatroomList.length; i++) {
+    if (
+      String(liveChatroomList[i].owner) === String(userId) ||
+      String(liveChatroomList[i].participant) === String(userId)
+    ) {
+      myChatroom = liveChatroomList[i];
     }
   }
+  //내 채팅룸 찾기
 
-  return { liveChatroomList, isMyChat };
+  return { liveChatroomList, myChatroom };
 };

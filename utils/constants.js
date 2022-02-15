@@ -13,10 +13,12 @@ exports.ERROR_MESSAGES = {
     "ERROR: Cannot establish socket connection either by authentication error or db error.",
   FAILED_TO_GET_USER_PROFILE: "ERROR: fail to get userProfile.",
   FAILED_TO_FIND_REVIEW: "ERROR: failed to find review...",
+  FAILED_TO_FIND_EXISTING_CHATROOM:
+    "ERROR: failed to find existing chatroom...",
   FAILED_TO_CREATE_REVIEW: "ERROR: failed to create review...",
   FAILED_TO_UPDATE_REVIEW: "ERROR: failed to update review.",
   FAILED_TO_GET_S3_URL: "ERROR: fail to get s3URL...",
-  FAILED_TO_GET_TOILET: "ERROR: fail to get toilets...",
+  FAILED_TO_GET_TOILET: "ERROR: fail to get toilet...",
   FAILED_TO_GET_REVIEW_LIST: "ERROR: fail to get reviewList...",
   USER_DID_NOT_APPROVE_NECESSARY_INFO:
     "ERROR: Please, login again, select email & nickname too.",

@@ -1,4 +1,8 @@
-const { getNearToilets, getReviews } = require("../service/toilets");
+const {
+  getNearToilets,
+  getReviews,
+  getToiletById,
+} = require("../service/toilets");
 const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../utils/constants");
 const ErrorWithStatus = require("../utils/ErrorwithStatus");
 
@@ -41,6 +45,24 @@ exports.getReviewsList = async (req, res, next) => {
         500,
         RESPONSE_RESULT.ERROR,
         ERROR_MESSAGES.FAILED_TO_GET_REVIEW_LIST
+      )
+    );
+  }
+};
+
+exports.getToilet = async (req, res, next) => {
+  const { toiletId } = req.params;
+
+  try {
+    const toilet = await getToiletById(toiletId);
+    res.json({ result: RESPONSE_RESULT.OK, toilet });
+  } catch (error) {
+    next(
+      new ErrorWithStatus(
+        error,
+        500,
+        RESPONSE_RESULT.ERROR,
+        ERROR_MESSAGES.FAILED_TO_GET_TOILET
       )
     );
   }

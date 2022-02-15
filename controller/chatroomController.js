@@ -7,14 +7,14 @@ exports.checkLiveChatroomList = async (req, res, next) => {
   const userId = req.userInfo._id;
 
   try {
-    const liveChatRoomList = await findLiveChatroomListByToilet(
+    const liveChatRoomData = await findLiveChatroomListByToilet(
       toiletId,
       userId
     );
 
     res.json({
       result: RESPONSE_RESULT.OK,
-      liveChatRoomList,
+      liveChatRoomData,
     });
 
     return;
