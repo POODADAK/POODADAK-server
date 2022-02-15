@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
-const { checkLiveChatroom } = require("../controller/chatroomController");
+const { checkLiveChatroomList } = require("../controller/chatroomController");
 const verifyPoodadakToken = require("../middlewares/verifyPoodadakToken");
 
-router.get("/live-chatroom", verifyPoodadakToken, checkLiveChatroom);
+router.get("/live-chatroom-list", verifyPoodadakToken, checkLiveChatroomList);
 
 module.exports = router;

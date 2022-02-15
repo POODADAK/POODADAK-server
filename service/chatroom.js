@@ -1,6 +1,6 @@
 const Chatroom = require("../model/Chatroom");
 
-exports.findLiveChatroomByToilet = async (toiletId, userId) => {
+exports.findLiveChatroomListByToilet = async (toiletId, userId) => {
   const liveChatroomList = await Chatroom.find({
     toilet: toiletId,
     isLive: true,
