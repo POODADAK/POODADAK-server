@@ -31,37 +31,24 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.pre("findOneAndUpdate", async function (next) {
-  const { reviewList } = await this.model.findById(this._conditions._id);
-
-  if (this._update.hasOwnProperty("$push")) {
-    if (reviewList.length < 4) {
-      this._update.$set = { level: "BRONZE" };
-      next();
-      return;
-    }
-    if (reviewList.length < 9) {
-      this._update.$set = { level: "SILVER" };
-      next();
-      return;
-    }
-    this._update.$set = { level: "GOLD" };
+userSchema.post("findOneAndUpdate", async function (doc, next) {
+  if (doc.reviewList.length < 5) {
+    doc.level = "BRONZE";
+    await doc.save();
     next();
     return;
   }
 
-  if (this._update.hasOwnProperty("$pull")) {
-    if (reviewList.length <= 5) {
-      this._update.$set = { level: "BRONZE" };
-      next();
-      return;
-    }
-    if (reviewList.length <= 10) {
-      this._update.$set = { level: "SILVER" };
-      next();
-      return;
-    }
-    this._update.$set = { level: "GOLD" };
+  if (doc.reviewList.length < 10) {
+    doc.level = "SILVER";
+    await doc.save();
+    next();
+    return;
+  }
+
+  if (doc.reviewList.length >= 10) {
+    doc.level = "GOLD";
+    await doc.save();
     next();
     return;
   }

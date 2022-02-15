@@ -14,13 +14,16 @@ exports.getUserById = async function (id) {
 
 exports.addReviewToUser = async function (userId, reviewId) {
   return await User.findByIdAndUpdate(
-    { _id: userId },
-    { $push: { reviewList: reviewId } }
+    userId,
+    { $push: { reviewList: reviewId } },
+    { new: true }
   );
 };
 
 exports.deleteReviewByUserId = async function (userId, reviewId) {
-  return await User.findByIdAndUpdate(userId, {
-    $pull: { reviewList: reviewId },
-  });
+  return await User.findByIdAndUpdate(
+    userId,
+    { $pull: { reviewList: reviewId } },
+    { new: true }
+  );
 };
