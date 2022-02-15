@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
@@ -28,6 +29,42 @@ const userSchema = new mongoose.Schema({
     type: mongoose.ObjectId,
     ref: "Chatroom",
   },
+});
+
+userSchema.pre("findOneAndUpdate", async function (next) {
+  const { reviewList } = await this.model.findById(this._conditions._id);
+
+  if (this._update.hasOwnProperty("$push")) {
+    if (reviewList.length < 4) {
+      this._update.$set = { level: "BRONZE" };
+      next();
+      return;
+    }
+    if (reviewList.length < 9) {
+      this._update.$set = { level: "SILVER" };
+      next();
+      return;
+    }
+    this._update.$set = { level: "GOLD" };
+    next();
+    return;
+  }
+
+  if (this._update.hasOwnProperty("$pull")) {
+    if (reviewList.length <= 5) {
+      this._update.$set = { level: "BRONZE" };
+      next();
+      return;
+    }
+    if (reviewList.length <= 10) {
+      this._update.$set = { level: "SILVER" };
+      next();
+      return;
+    }
+    this._update.$set = { level: "GOLD" };
+    next();
+    return;
+  }
 });
 
 module.exports = mongoose.model("User", userSchema);

@@ -2,12 +2,16 @@ const {
   createReview,
   updateReview,
   findReviewById,
+  deleteReviewById,
 } = require("../service/review");
 const {
   updateLatestToiletPaperInfoById,
   addReviewtoToilet,
+  deleteReviewByToiletId,
 } = require("../service/toilets");
-const { addReviewToUser } = require("../service/user");
+const { addReviewToUser, deleteReviewByUserId } = require("../service/user");
+const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../utils/constants");
+const ErrorWithStatus = require("../utils/ErrorwithStatus");
 
 exports.getReview = async (req, res, next) => {
   try {
@@ -15,11 +19,16 @@ exports.getReview = async (req, res, next) => {
     const existingReview = await findReviewById(reviewId);
 
     res.json(existingReview);
+    return;
   } catch (error) {
-    res.status(400).json({
-      result: "error",
-      errMessage: "ERROR: failed to find review...",
-    });
+    next(
+      new ErrorWithStatus(
+        error,
+        500,
+        RESPONSE_RESULT.ERROR,
+        ERROR_MESSAGES.FAILED_TO_FIND_REVIEW
+      )
+    );
   }
 };
 
@@ -42,14 +51,20 @@ exports.saveReview = async (req, res, next) => {
     await addReviewToUser(req.userInfo._id, createdReview._id);
 
     res.json({
-      result: "ok",
+      result: RESPONSE_RESULT.OK,
       review: createdReview,
     });
+
+    return;
   } catch (error) {
-    res.status(400).json({
-      result: "error",
-      errMessage: "ERROR: failed to create review...",
-    });
+    next(
+      new ErrorWithStatus(
+        error,
+        500,
+        RESPONSE_RESULT.ERROR,
+        ERROR_MESSAGES.FAILED_TO_CREATE_REVIEW
+      )
+    );
   }
 };
 
@@ -72,12 +87,43 @@ exports.editReview = async (req, res, next) => {
     await updateLatestToiletPaperInfoById(toilet, hasToiletPaper);
 
     res.json({
-      result: "ok",
+      result: RESPONSE_RESULT.OK,
     });
+
+    return;
   } catch (error) {
-    res.status(400).json({
-      result: "error",
-      errMessage: "ERROR: failed to update review...",
+    next(
+      new ErrorWithStatus(
+        error,
+        500,
+        RESPONSE_RESULT.ERROR,
+        ERROR_MESSAGES.FAILED_TO_UPDATE_REVIEW
+      )
+    );
+  }
+};
+
+exports.deleteReview = async (req, res, next) => {
+  const { reviewId } = req.params;
+
+  try {
+    const { writer, toilet } = await deleteReviewById(reviewId);
+    await deleteReviewByToiletId(toilet, reviewId);
+    await deleteReviewByUserId(writer, reviewId);
+
+    res.json({
+      result: RESPONSE_RESULT.OK,
     });
+
+    return;
+  } catch (error) {
+    next(
+      new ErrorWithStatus(
+        error,
+        500,
+        RESPONSE_RESULT.ERROR,
+        ERROR_MESSAGES.FAILED_TO_UPDATE_REVIEW
+      )
+    );
   }
 };

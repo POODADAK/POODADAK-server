@@ -65,3 +65,9 @@ exports.updateSOS = async function (toiletId) {
     return;
   }
 };
+
+exports.deleteReviewByToiletId = async function (toiletId, reviewId) {
+  return await Toilet.findByIdAndUpdate(toiletId, {
+    $pull: { reviewList: reviewId },
+  });
+};

@@ -1,4 +1,6 @@
-const { getNearToilets, getToilet, getReviews } = require("../service/toilets");
+const { getNearToilets, getReviews } = require("../service/toilets");
+const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../utils/constants");
+const ErrorWithStatus = require("../utils/ErrorwithStatus");
 
 exports.getNearToiletsList = async (req, res, next) => {
   const { lat, lng } = req.query;
@@ -6,33 +8,20 @@ exports.getNearToiletsList = async (req, res, next) => {
     const toiletList = await getNearToilets(lat, lng);
 
     res.json({
-      result: "ok",
+      result: RESPONSE_RESULT.OK,
       toiletList,
     });
 
     return;
   } catch (error) {
-    res.status(400).json({
-      result: "error",
-      errMessage: "ERROR: fail to get toilets...",
-    });
-  }
-};
-
-exports.getToliet = async (req, res, next) => {
-  const { toiletId } = req.params;
-
-  try {
-    const toilet = await getToilet(toiletId);
-
-    res.json({ result: "ok", toilet });
-
-    return;
-  } catch (error) {
-    res.status(400).json({
-      result: "error",
-      errMessage: "ERROR: fail to get the toilet...",
-    });
+    next(
+      new ErrorWithStatus(
+        error,
+        400,
+        RESPONSE_RESULT.ERROR,
+        ERROR_MESSAGES.FAILED_TO_GET_TOILET
+      )
+    );
   }
 };
 
@@ -46,9 +35,13 @@ exports.getReviewsList = async (req, res, next) => {
 
     return;
   } catch (error) {
-    res.status(400).json({
-      result: "error",
-      errMessage: "ERROR: fail to get reviewList...",
-    });
+    next(
+      new ErrorWithStatus(
+        error,
+        500,
+        RESPONSE_RESULT.ERROR,
+        ERROR_MESSAGES.FAILED_TO_GET_REVIEW_LIST
+      )
+    );
   }
 };

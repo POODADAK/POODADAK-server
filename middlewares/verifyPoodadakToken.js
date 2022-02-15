@@ -1,14 +1,22 @@
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 
 const { getUserById } = require("../service/user");
+const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../utils/constants");
+const ErrorWithStatus = require("../utils/ErrorwithStatus");
 
 const verifyPoodadakToken = async (req, res, next) => {
   const fetchedToken = req.cookies.POODADAK_TOKEN;
 
   if (!fetchedToken) {
-    res.status(404).json({
-      result: "noToken",
-    });
+    next(
+      new ErrorWithStatus(
+        null,
+        400,
+        RESPONSE_RESULT.NO_TOKEN,
+        ERROR_MESSAGES.FAILED_TO_VERIFY_TOKEN
+      )
+    );
 
     return;
   }
@@ -18,9 +26,14 @@ const verifyPoodadakToken = async (req, res, next) => {
     const user = await getUserById(id);
 
     if (!user) {
-      res.status(404).json({
-        result: "noUser",
-      });
+      next(
+        new ErrorWithStatus(
+          null,
+          404,
+          RESPONSE_RESULT.NO_USER,
+          ERROR_MESSAGES.FAILED_TO_FIND_MATCHING_USER
+        )
+      );
 
       return;
     }
@@ -29,7 +42,18 @@ const verifyPoodadakToken = async (req, res, next) => {
 
     next();
   } catch (error) {
-    next(error);
+    const isMongooseError = error instanceof mongoose.Error;
+    let errMessage = ERROR_MESSAGES.FAILED_TO_VERIFY_TOKEN;
+    let statusCode = 401;
+
+    if (isMongooseError) {
+      errMessage = ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB;
+      statusCode = 500;
+    }
+
+    next(
+      new ErrorWithStatus(error, statusCode, RESPONSE_RESULT.ERROR, errMessage)
+    );
   }
 };
 

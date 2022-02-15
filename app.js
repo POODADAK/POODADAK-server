@@ -38,4 +38,12 @@ app.use("/chatroom", chatroomRouter);
 app.use("/s3Url", s3Router);
 app.use("/profile", profileRouter);
 
+app.use(function (error, req, res, next) {
+  res.status(error.status || 500);
+  res.json({
+    result: error.result,
+    errMessage: error.message,
+  });
+});
+
 module.exports = app;
