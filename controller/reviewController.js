@@ -2,12 +2,14 @@ const {
   createReview,
   updateReview,
   findReviewById,
+  deleteReviewById,
 } = require("../service/review");
 const {
   updateLatestToiletPaperInfoById,
   addReviewtoToilet,
+  deleteReviewByToiletId,
 } = require("../service/toilets");
-const { addReviewToUser } = require("../service/user");
+const { addReviewToUser, deleteReviewByUserId } = require("../service/user");
 const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../utils/constants");
 const ErrorWithStatus = require("../utils/ErrorwithStatus");
 
@@ -83,6 +85,31 @@ exports.editReview = async (req, res, next) => {
 
     await updateReview(reviewId, submittedReview);
     await updateLatestToiletPaperInfoById(toilet, hasToiletPaper);
+
+    res.json({
+      result: RESPONSE_RESULT.OK,
+    });
+
+    return;
+  } catch (error) {
+    next(
+      new ErrorWithStatus(
+        error,
+        500,
+        RESPONSE_RESULT.ERROR,
+        ERROR_MESSAGES.FAILED_TO_UPDATE_REVIEW
+      )
+    );
+  }
+};
+
+exports.deleteReview = async (req, res, next) => {
+  const { reviewId } = req.params;
+
+  try {
+    const { writer, toilet } = await deleteReviewById(reviewId);
+    await deleteReviewByToiletId(toilet, reviewId);
+    await deleteReviewByUserId(writer, reviewId);
 
     res.json({
       result: RESPONSE_RESULT.OK,
