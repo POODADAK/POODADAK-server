@@ -19,6 +19,10 @@ exports.getNearToilets = async function (lat, lng) {
   });
 };
 
+exports.getToilet = async function (id) {
+  return await Toilet.findById(id);
+};
+
 exports.getReviews = async function (id) {
   const { reviewList } = await Toilet.findById(id)
     .populate({
