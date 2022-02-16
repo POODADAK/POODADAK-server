@@ -22,8 +22,8 @@ exports.createReview = async (newReview) => {
   return await Review.create(newReview);
 };
 
-exports.updateReview = async (id, updatedReview) => {
-  return await Review.findByIdAndUpdate(id, updatedReview);
+exports.updateReview = async (reviewId, updatedReview) => {
+  return await Review.findByIdAndUpdate(reviewId, updatedReview);
 };
 
 exports.deleteReviewById = async (reviewId) => {
