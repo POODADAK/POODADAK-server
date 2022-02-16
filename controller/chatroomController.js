@@ -1,6 +1,7 @@
 const {
   findLiveChatroomListByToilet,
   createChatroom,
+  getChatroomById,
 } = require("../service/chatroom");
 const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../utils/constants");
 const ErrorWithStatus = require("../utils/ErrorwithStatus");
@@ -50,6 +51,25 @@ exports.createLiveChatroom = async (req, res, next) => {
         500,
         RESPONSE_RESULT.ERROR,
         ERROR_MESSAGES.FAILED_TO_CREATE_CHATROOM
+      )
+    );
+  }
+};
+
+exports.getChatroom = async (req, res, next) => {
+  const { chatroomId } = req.params;
+
+  try {
+    const chatroom = await getChatroomById(chatroomId);
+
+    res.json({ result: RESPONSE_RESULT.OK, chatroom });
+  } catch (error) {
+    next(
+      new ErrorWithStatus(
+        error,
+        500,
+        RESPONSE_RESULT.ERROR,
+        ERROR_MESSAGES.FAILED_TO_CHECK_CHATROOM_LIVE_STATUS
       )
     );
   }

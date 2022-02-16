@@ -1,5 +1,5 @@
 const Chatroom = require("../../model/Chatroom");
-const Toilet = require("../../model/Toilet");
+const { updateSOS } = require("../../service/toilets");
 const { ERROR_MESSAGES } = require("../../utils/constants");
 const ErrorWithStatus = require("../../utils/ErrorwithStatus");
 
@@ -19,7 +19,15 @@ async function registerConnection(socket) {
 
   try {
     if (roomDBId !== "") {
-      chatroomDocument = await Chatroom.findById(roomDBId).lean();
+      chatroomDocument = await Chatroom.findById(roomDBId);
+
+      if (
+        !chatroomDocument.participant &&
+        userId !== String(chatroomDocument.owner)
+      ) {
+        await chatroomDocument.update({ participant: userId });
+        updateSOS(toiletId);
+      }
     } else {
       chatroomDocument = await Chatroom.create({
         owner: userId,
@@ -32,7 +40,6 @@ async function registerConnection(socket) {
       throw new Error(ERROR_MESSAGES.FAILED_TO_FIND_EXISTING_CHATROOM);
     }
 
-    await Toilet.findByIdAndUpdate(toiletId, { isSOS: true });
     socket.emit("joinChatroom", chatroomDocument);
 
     return chatroomDocument._id;

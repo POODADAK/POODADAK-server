@@ -1,4 +1,5 @@
 const Chatroom = require("../model/Chatroom");
+const Toilet = require("../model/Toilet");
 
 exports.findLiveChatroomListByToilet = async (
   toiletId,
@@ -36,8 +37,14 @@ exports.findLiveChatroomListByToilet = async (
 };
 
 exports.createChatroom = async (toiletId, userId) => {
+  await Toilet.findByIdAndUpdate(toiletId, { isSOS: true });
+
   return await Chatroom.create({
     owner: userId,
     toilet: toiletId,
   });
+};
+
+exports.getChatroomById = async (chatroomId) => {
+  return await Chatroom.findById(chatroomId);
 };

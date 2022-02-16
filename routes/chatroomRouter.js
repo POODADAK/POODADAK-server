@@ -4,6 +4,7 @@ const router = express.Router();
 const {
   checkLiveChatroomList,
   createLiveChatroom,
+  getChatroom,
 } = require("../controller/chatroomController");
 const verifyPoodadakToken = require("../middlewares/verifyPoodadakToken");
 
@@ -13,6 +14,7 @@ router.get(
   verifyPoodadakToken,
   checkLiveChatroomList
 );
+router.get("/:chatroomId", verifyPoodadakToken, getChatroom);
 
 router.post("/new-chatroom", verifyPoodadakToken, createLiveChatroom);
 

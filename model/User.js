@@ -1,6 +1,8 @@
 /* eslint-disable no-prototype-builtins */
 const mongoose = require("mongoose");
 
+const { USER_LEVEL } = require("../utils/constants");
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -36,32 +38,32 @@ userSchema.pre("findOneAndUpdate", async function (next) {
 
   if (this._update.hasOwnProperty("$push")) {
     if (reviewList.length < 4) {
-      this._update.$set = { level: "BRONZE" };
+      this._update.$set = { level: USER_LEVEL.BRONZE };
       next();
       return;
     }
     if (reviewList.length < 9) {
-      this._update.$set = { level: "SILVER" };
+      this._update.$set = { level: USER_LEVEL.SILVER };
       next();
       return;
     }
-    this._update.$set = { level: "GOLD" };
+    this._update.$set = { level: USER_LEVEL.GOLD };
     next();
     return;
   }
 
   if (this._update.hasOwnProperty("$pull")) {
     if (reviewList.length <= 5) {
-      this._update.$set = { level: "BRONZE" };
+      this._update.$set = { level: USER_LEVEL.BRONZE };
       next();
       return;
     }
     if (reviewList.length <= 10) {
-      this._update.$set = { level: "SILVER" };
+      this._update.$set = { level: USER_LEVEL.SILVER };
       next();
       return;
     }
-    this._update.$set = { level: "GOLD" };
+    this._update.$set = { level: USER_LEVEL.GOLD };
     next();
     return;
   }
