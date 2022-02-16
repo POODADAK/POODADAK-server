@@ -1,7 +1,7 @@
 /* eslint-disable no-prototype-builtins */
 const mongoose = require("mongoose");
 
-const { USER_LEVEL } = require("../utils/constants");
+const { USER_LEVEL, SOCIAL_SERVICE } = require("../utils/constants");
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -10,8 +10,8 @@ const userSchema = new mongoose.Schema({
   },
   level: {
     type: String,
-    enum: ["GOLD", "SILVER", "BRONZE"],
-    default: "BRONZE",
+    enum: [USER_LEVEL.GOLD, USER_LEVEL.SILVER, USER_LEVEL.BRONZE],
+    default: USER_LEVEL.BRONZE,
     required: true,
   },
   email: {
@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
   },
   socialService: {
     type: String,
-    enum: ["KAKAO", "NAVER"],
+    enum: [SOCIAL_SERVICE.KAKAO, SOCIAL_SERVICE.NAVER],
     required: true,
   },
   reviewList: {
@@ -33,37 +33,24 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.pre("findOneAndUpdate", async function (next) {
-  const { reviewList } = await this.model.findById(this._conditions._id);
-
-  if (this._update.hasOwnProperty("$push")) {
-    if (reviewList.length < 4) {
-      this._update.$set = { level: USER_LEVEL.BRONZE };
-      next();
-      return;
-    }
-    if (reviewList.length < 9) {
-      this._update.$set = { level: USER_LEVEL.SILVER };
-      next();
-      return;
-    }
-    this._update.$set = { level: USER_LEVEL.GOLD };
+userSchema.post("findOneAndUpdate", async function (doc, next) {
+  if (doc.reviewList.length < 5) {
+    doc.level = USER_LEVEL.BRONZE;
+    await doc.save();
     next();
     return;
   }
 
-  if (this._update.hasOwnProperty("$pull")) {
-    if (reviewList.length <= 5) {
-      this._update.$set = { level: USER_LEVEL.BRONZE };
-      next();
-      return;
-    }
-    if (reviewList.length <= 10) {
-      this._update.$set = { level: USER_LEVEL.SILVER };
-      next();
-      return;
-    }
-    this._update.$set = { level: USER_LEVEL.GOLD };
+  if (doc.reviewList.length < 10) {
+    doc.level = USER_LEVEL.SILVER;
+    await doc.save();
+    next();
+    return;
+  }
+
+  if (doc.reviewList.length >= 10) {
+    doc.level = USER_LEVEL.GOLD;
+    await doc.save();
     next();
     return;
   }
