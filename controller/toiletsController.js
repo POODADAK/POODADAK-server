@@ -30,10 +30,10 @@ exports.getNearToiletsList = async (req, res, next) => {
 };
 
 exports.getReviewsList = async (req, res, next) => {
-  const { id } = req.params;
+  const { toiletId } = req.params;
 
   try {
-    const reviewList = await getReviews(id);
+    const reviewList = await getReviews(toiletId);
 
     res.json({ result: "ok", reviewList });
 

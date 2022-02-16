@@ -9,6 +9,6 @@ const {
 
 router.get("/", getNearToiletsList);
 router.get("/:toiletId", getToilet);
-router.get("/review/:id", getReviewsList);
+router.get("/review/:toiletId", getReviewsList);
 
 module.exports = router;

@@ -19,12 +19,12 @@ exports.getNearToilets = async function (lat, lng) {
   });
 };
 
-exports.getToiletById = async function (id) {
-  return await Toilet.findById(id).populate("reviewList");
+exports.getToiletById = async function (toiletId) {
+  return await Toilet.findById(toiletId).populate("reviewList");
 };
 
-exports.getReviews = async function (id) {
-  const { reviewList } = await Toilet.findById(id)
+exports.getReviews = async function (toiletId) {
+  const { reviewList } = await Toilet.findById(toiletId)
     .populate({
       path: "reviewList",
       populate: { path: "toilet", model: "Toilet" },
@@ -38,8 +38,11 @@ exports.getReviews = async function (id) {
   return reviewList;
 };
 
-exports.updateLatestToiletPaperInfoById = async function (id, hasToiletPaper) {
-  return await Toilet.findByIdAndUpdate(id, {
+exports.updateLatestToiletPaperInfoById = async function (
+  toiletId,
+  hasToiletPaper
+) {
+  return await Toilet.findByIdAndUpdate(toiletId, {
     $set: {
       latestToiletPaperInfo: {
         lastDate: new Date().toISOString(),
