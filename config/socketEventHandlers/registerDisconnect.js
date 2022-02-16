@@ -10,13 +10,7 @@ function registerDisconnect(socket, chatroomId) {
   socket.on("disconnect", async () => {
     try {
       if (chatroomId) {
-        const chatList = await Chatroom.findById(chatroomId, "chatList");
-
-        if (!chatList.length) {
-          await Chatroom.findByIdAndDelete(chatroomId);
-        } else {
-          await Chatroom.findByIdAndUpdate(chatroomId, { isLive: false });
-        }
+        await Chatroom.findByIdAndUpdate(chatroomId, { isLive: false });
       }
       await updateSOS(toiletId);
 

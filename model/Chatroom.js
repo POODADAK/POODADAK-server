@@ -9,6 +9,7 @@ const chatroomSchema = new mongoose.Schema({
   participant: {
     type: mongoose.ObjectId,
     ref: "User",
+    default: null,
   },
   chatList: {
     type: [
@@ -27,7 +28,7 @@ const chatroomSchema = new mongoose.Schema({
   },
   isLive: {
     type: Boolean,
-    isRequired: true,
+    default: true,
   },
 });
 

@@ -1,5 +1,5 @@
 const Chatroom = require("../../model/Chatroom");
-const Toilet = require("../../model/Toilet");
+const { updateSOS } = require("../../service/toilets");
 const { ERROR_MESSAGES } = require("../../utils/constants");
 const ErrorWithStatus = require("../../utils/ErrorwithStatus");
 
@@ -8,7 +8,7 @@ async function registerConnection(socket) {
   const userId = socket.userId;
   const toiletId = socket.nsp.name.split("-")[1];
   const roomName = socket.handshake.query.room;
-  let chatroomId;
+  let chatroomDocument;
 
   socket.join(roomName);
 
@@ -18,23 +18,31 @@ async function registerConnection(socket) {
   );
 
   try {
-    const connectedChatroom = await Chatroom.findById(roomDBId);
-    if (connectedChatroom) {
-      chatroomId = connectedChatroom._id;
+    if (roomDBId !== "") {
+      chatroomDocument = await Chatroom.findById(roomDBId);
+
+      if (
+        !chatroomDocument.participant &&
+        userId !== String(chatroomDocument.owner)
+      ) {
+        await chatroomDocument.update({ participant: userId });
+        updateSOS(toiletId);
+      }
     } else {
-      const createdChatroom = await Chatroom.create({
+      chatroomDocument = await Chatroom.create({
         owner: userId,
         toilet: toiletId,
         isLive: true,
       });
-
-      chatroomId = createdChatroom._id;
     }
 
-    await Toilet.findByIdAndUpdate(toiletId, { isSOS: true });
-    socket.emit("joinChatroom", chatroomId);
+    if (!chatroomDocument) {
+      throw new Error(ERROR_MESSAGES.FAILED_TO_FIND_EXISTING_CHATROOM);
+    }
 
-    return chatroomId;
+    socket.emit("joinChatroom", chatroomDocument);
+
+    return chatroomDocument._id;
   } catch (error) {
     socket.emit(
       "db-error",
