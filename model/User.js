@@ -1,6 +1,8 @@
 /* eslint-disable no-prototype-builtins */
 const mongoose = require("mongoose");
 
+const { USER_LEVEL, SOCIAL_SERVICE } = require("../utils/constants");
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -8,8 +10,8 @@ const userSchema = new mongoose.Schema({
   },
   level: {
     type: String,
-    enum: ["GOLD", "SILVER", "BRONZE"],
-    default: "BRONZE",
+    enum: [USER_LEVEL.GOLD, USER_LEVEL.SILVER, USER_LEVEL.BRONZE],
+    default: USER_LEVEL.BRONZE,
     required: true,
   },
   email: {
@@ -18,7 +20,7 @@ const userSchema = new mongoose.Schema({
   },
   socialService: {
     type: String,
-    enum: ["KAKAO", "NAVER"],
+    enum: [SOCIAL_SERVICE.KAKAO, SOCIAL_SERVICE.NAVER],
     required: true,
   },
   reviewList: {
@@ -33,21 +35,21 @@ const userSchema = new mongoose.Schema({
 
 userSchema.post("findOneAndUpdate", async function (doc, next) {
   if (doc.reviewList.length < 5) {
-    doc.level = "BRONZE";
+    doc.level = USER_LEVEL.BRONZE;
     await doc.save();
     next();
     return;
   }
 
   if (doc.reviewList.length < 10) {
-    doc.level = "SILVER";
+    doc.level = USER_LEVEL.SILVER;
     await doc.save();
     next();
     return;
   }
 
   if (doc.reviewList.length >= 10) {
-    doc.level = "GOLD";
+    doc.level = USER_LEVEL.GOLD;
     await doc.save();
     next();
     return;

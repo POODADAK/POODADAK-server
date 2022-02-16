@@ -38,6 +38,12 @@ exports.SOCIAL_SERVICE = {
   NAVER: "NAVER",
 };
 
+exports.USER_LEVEL = {
+  GOLD: "GOLD",
+  SILVER: "SILVER",
+  BRONZE: "BRONZE",
+};
+
 exports.MINUTE_TO_MILLISECONDS = {
   THIRTY_MINUTES: 1800000,
 };
