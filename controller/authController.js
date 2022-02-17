@@ -1,7 +1,6 @@
 const url = require("url");
 
 const axios = require("axios");
-// const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
 const { createUser, getUser } = require("../service/user");
