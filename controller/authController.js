@@ -1,7 +1,7 @@
 const url = require("url");
 
 const axios = require("axios");
-const jwt = require("jsonwebtoken");
+// const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
 const { createUser, getUser } = require("../service/user");
@@ -11,12 +11,7 @@ const {
   SOCIAL_SERVICE,
 } = require("../utils/constants");
 const ErrorWithStatus = require("../utils/ErrorwithStatus");
-
-function signToken(id) {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE_TIME,
-  });
-}
+const signToken = require("../utils/signToken");
 
 function createAndSendToken(user, res) {
   const token = signToken(user._id);
