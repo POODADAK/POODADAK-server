@@ -83,6 +83,10 @@ exports.editReview = async (req, res, next) => {
       updatedAt,
     };
 
+    if (!submittedReview.description) {
+      throw new Error();
+    }
+
     await updateReview(reviewId, submittedReview);
     await updateLatestToiletPaperInfoById(toilet, hasToiletPaper);
 
