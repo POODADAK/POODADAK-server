@@ -7,7 +7,7 @@ const { SOCIAL_SERVICE, USER_LEVEL } = require("../utils/constants");
 
 exports.mochaHooks = {
   async beforeAll() {
-    await mongoose.connect(process.env.TEST_DB_LOCAL_URL);
+    mongoose.connect(process.env.TEST_DB_LOCAL_URL);
 
     await Toilet.create({
       _id: process.env.TEST_TOILET_ID,
