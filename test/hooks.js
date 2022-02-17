@@ -66,7 +66,7 @@ exports.mochaHooks = {
       username: "푸다닥-네이버",
       level: USER_LEVEL.BRONZE,
       email: "poodadak.naver@gmail.com",
-      socialService: SOCIAL_SERVICE.KAKAO,
+      socialService: SOCIAL_SERVICE.NAVER,
       reviewList: [process.env.TEST_REVIEW_ID_USER_NAVER],
     });
 
