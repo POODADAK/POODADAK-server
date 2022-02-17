@@ -1,17 +1,7 @@
 const mongoose = require("mongoose");
 
 exports.mochaHooks = {
-  async beforeAll() {
-    const databaseName = "test";
-
-    Object.keys(mongoose.connection.models).forEach((modelName) => {
-      delete mongoose.connection.models[modelName];
-    });
-
-    await mongoose.connect(`mongodb://127.0.0.1/${databaseName}`, {
-      useNewUrlParser: true,
-    });
-  },
+  async beforeAll() {},
   async afterEach() {
     const collections = Object.keys(mongoose.connection.collections);
 
@@ -21,6 +11,8 @@ exports.mochaHooks = {
     }
   },
   async afterAll() {
-    await mongoose.connection.close();
+    Object.keys(mongoose.connection.models).forEach((modelName) => {
+      delete mongoose.connection.models[modelName];
+    });
   },
 };
