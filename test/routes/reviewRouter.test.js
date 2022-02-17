@@ -5,7 +5,7 @@ const app = require("../../app");
 const signToken = require("../../utils/signToken");
 
 describe("GET /review/:reviewId", () => {
-  it("should response with 200 and get review", async () => {
+  it("should respond with 200 and get review", async () => {
     const response = await request(app).get(
       `/review/${process.env.TEST_REVIEW_ID_USER_NAVER}`
     );
@@ -36,7 +36,7 @@ describe("post /review", () => {
     updatedAt: "2022-02-17T08:31:50.922Z",
   };
 
-  it("should response with 200 and review is saved in the database.", async () => {
+  it("should respond with 200 and review is saved in the database.", async () => {
     const response = await request(app)
       .post("/review")
       .set("Cookie", `POODADAK_TOKEN=${token}`)
@@ -55,7 +55,7 @@ describe("post /review", () => {
     });
   });
 
-  it("should review is not saved in the database with empty description.", async () => {
+  it("review should not be saved in the database with empty description.", async () => {
     const descriptionsNullReview = newReview;
     descriptionsNullReview.description = "";
 
@@ -84,7 +84,7 @@ describe("POST /review/:reviewId", () => {
 
   const params = process.env.TEST_REVIEW_ID_USER_NAVER;
 
-  it("should response with 200 and review needs to be modified.", async () => {
+  it("should respond with 200 and review needs to be modified.", async () => {
     const response = await request(app)
       .post(`/review/${params}`)
       .set("Cookie", `POODADAK_TOKEN=${token}`)
@@ -94,7 +94,7 @@ describe("POST /review/:reviewId", () => {
     expect(response.body.result).to.equal("ok");
   });
 
-  it("should review needs not to be modified with empty description.", async () => {
+  it("review should not get modified with empty description.", async () => {
     submittedReview.description = "";
 
     const response = await request(app)
