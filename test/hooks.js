@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
 
 exports.mochaHooks = {
-  async beforeAll() {},
+  async beforeAll() {
+    //모든 테스트 실행이전 필요한 작업이 있을경우 채워주시기 바랍니다.
+  },
   async afterEach() {
     const collections = Object.keys(mongoose.connection.collections);
 
