@@ -33,7 +33,10 @@ exports.mochaHooks = {
       institutionCode: null,
       latestToiletPaperInfo: { lastDate: "", hasToiletPaper: false },
       location: { type: "Point", coordinates: [127.063067, 37.508826] },
-      reviewList: [],
+      reviewList: [
+        process.env.TEST_REVIEW_ID_USER_KAKAO,
+        process.env.TEST_REVIEW_ID_USER_NAVER,
+      ],
       isSOS: true,
     });
 
