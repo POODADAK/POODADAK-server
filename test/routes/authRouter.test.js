@@ -8,7 +8,7 @@ const app = require("../../app");
 const { RESPONSE_RESULT } = require("../../utils/constants");
 const signToken = require("../../utils/signToken");
 const kakaoToken = signToken(process.env.TEST_USER_ID_KAKAO);
-// const naverToken = signToken(process.env.TEST_USER_ID_NAVER);
+const naverToken = signToken(process.env.TEST_USER_ID_NAVER);
 const noUserToken = signToken(process.env.TEST_USER_ID_NOT_IN_DB);
 const invalidDBIDToken = signToken(
   process.env.TEST_USER_ID_INVALID_DB_OBJECT_ID
@@ -80,6 +80,149 @@ describe("/kakao", () => {
 
       expect(response._getStatusCode()).to.equal(401);
     });
+
+    it("should respond 500 when DB error happens", async () => {
+      const fakeKakaoApi = createFakeKakaoApiStub(null);
+
+      const signinKakao = proxyquire("../../controller/authController", {
+        axios: {
+          post: fakeKakaoApi,
+        },
+      }).signinKakao;
+
+      await signinKakao(request, response, fakeExpressNext);
+
+      expect(response._getStatusCode()).to.equal(500);
+    });
+  });
+});
+
+describe("/naver", () => {
+  const request = httpMocks.createRequest({
+    method: "GET",
+    url: "/auth/naver",
+    body: { code: "valid", state: "valid" },
+  });
+
+  const response = httpMocks.createResponse();
+
+  const fakeExpressNext = sinon.fake((error) => {
+    response.statusCode = error.status;
+    response.json();
+  });
+
+  const createFakeNaverPostApiStub = (access_token, token_type) => {
+    return sinon
+      .stub()
+      .onCall(0)
+      .returns({
+        data: {
+          access_token,
+          token_type,
+        },
+      })
+      .onCall(1)
+      .returns({});
+  };
+
+  const createFakeNaverGetApiStub = (email, nickname) => {
+    return sinon
+      .stub()
+      .onCall(0)
+      .returns({
+        data: {
+          response: {
+            email,
+            nickname,
+          },
+        },
+      });
+  };
+
+  describe("success", () => {
+    const fakeNaverPostApi = createFakeNaverPostApiStub(
+      "validToken",
+      "validType"
+    );
+    const fakeNaverGetApi = createFakeNaverGetApiStub(
+      "poodadak.naver@gmail.com",
+      "푸다닥-네이버"
+    );
+    const signinNaver = proxyquire("../../controller/authController", {
+      axios: {
+        post: fakeNaverPostApi,
+        get: fakeNaverGetApi,
+      },
+    }).signinNaver;
+
+    it("should respond with 200, result: ok, and userId", async () => {
+      await signinNaver(request, response, fakeExpressNext);
+
+      expect(response._getStatusCode()).to.equal(200);
+      expect(response._getJSONData().result).to.equal(RESPONSE_RESULT.OK);
+      expect(response._getJSONData().userId).to.equal(
+        process.env.TEST_USER_ID_NAVER
+      );
+    });
+  });
+
+  describe("fails", () => {
+    it("should respond 401 when email is not provided", async () => {
+      const fakeNaverPostApi = createFakeNaverPostApiStub(
+        "validToken",
+        "validType"
+      );
+      const fakeNaverGetApi = createFakeNaverGetApiStub("", "푸다닥-네이버");
+      const signinNaver = proxyquire("../../controller/authController", {
+        axios: {
+          post: fakeNaverPostApi,
+          get: fakeNaverGetApi,
+        },
+      }).signinNaver;
+
+      await signinNaver(request, response, fakeExpressNext);
+
+      expect(response._getStatusCode()).to.equal(401);
+    });
+
+    it("should respond 401 when nickname is not provided", async () => {
+      const fakeNaverPostApi = createFakeNaverPostApiStub(
+        "validToken",
+        "validType"
+      );
+      const fakeNaverGetApi = createFakeNaverGetApiStub(
+        "poodadak.naver@gmail.com",
+        ""
+      );
+      const signinNaver = proxyquire("../../controller/authController", {
+        axios: {
+          post: fakeNaverPostApi,
+          get: fakeNaverGetApi,
+        },
+      }).signinNaver;
+
+      await signinNaver(request, response, fakeExpressNext);
+
+      expect(response._getStatusCode()).to.equal(401);
+    });
+
+    it("should respond 500 when DB error happens", async () => {
+      const fakeNaverPostApi = createFakeNaverPostApiStub(
+        "validToken",
+        "validType"
+      );
+      const fakeNaverGetApi = createFakeNaverGetApiStub({}, {});
+      const signinNaver = proxyquire("../../controller/authController", {
+        axios: {
+          post: fakeNaverPostApi,
+          get: fakeNaverGetApi,
+        },
+      }).signinNaver;
+
+      await signinNaver(request, response, fakeExpressNext);
+
+      expect(response._getStatusCode()).to.equal(500);
+    });
   });
 });
 
@@ -94,43 +237,61 @@ describe("/token-elimination", () => {
 });
 
 describe("/token-verification", () => {
-  it("should respond with 200, userId, and verified result", async () => {
-    const response = await request(app)
-      .post("/auth/token-verification")
-      .set("Cookie", `POODADAK_TOKEN=${kakaoToken}`);
+  describe("success", () => {
+    describe("kakao token", () => {
+      it("should respond with 200, userId, and verified result", async () => {
+        const response = await request(app)
+          .post("/auth/token-verification")
+          .set("Cookie", `POODADAK_TOKEN=${kakaoToken}`);
 
-    expect(response.status).to.equal(200);
-    expect(response.body.result).to.equal(RESPONSE_RESULT.VERIFIED);
-    expect(response.body.userId).to.equal(process.env.TEST_USER_ID_KAKAO);
+        expect(response.status).to.equal(200);
+        expect(response.body.result).to.equal(RESPONSE_RESULT.VERIFIED);
+        expect(response.body.userId).to.equal(process.env.TEST_USER_ID_KAKAO);
+      });
+    });
+
+    describe("naver token", () => {
+      it("should respond with 200, userId, and verified result", async () => {
+        const response = await request(app)
+          .post("/auth/token-verification")
+          .set("Cookie", `POODADAK_TOKEN=${naverToken}`);
+
+        expect(response.status).to.equal(200);
+        expect(response.body.result).to.equal(RESPONSE_RESULT.VERIFIED);
+        expect(response.body.userId).to.equal(process.env.TEST_USER_ID_NAVER);
+      });
+    });
   });
 
-  it("should fail with 400 when there's no token", async () => {
-    const response = await request(app).post("/auth/token-verification");
+  describe("fail", () => {
+    it("should fail with 400 when there's no token", async () => {
+      const response = await request(app).post("/auth/token-verification");
 
-    expect(response.status).to.equal(400);
-  });
+      expect(response.status).to.equal(400);
+    });
 
-  it("should fail with 404 when token has no matching user", async () => {
-    const response = await request(app)
-      .post("/auth/token-verification")
-      .set("Cookie", `POODADAK_TOKEN=${noUserToken}`);
+    it("should fail with 404 when token has no matching user", async () => {
+      const response = await request(app)
+        .post("/auth/token-verification")
+        .set("Cookie", `POODADAK_TOKEN=${noUserToken}`);
 
-    expect(response.status).to.equal(404);
-  });
+      expect(response.status).to.equal(404);
+    });
 
-  it("should fail with 401 when token is invalid", async () => {
-    const response = await request(app)
-      .post("/auth/token-verification")
-      .set("Cookie", "POODADAK_TOKEN=invalid");
+    it("should fail with 401 when token is invalid", async () => {
+      const response = await request(app)
+        .post("/auth/token-verification")
+        .set("Cookie", "POODADAK_TOKEN=invalid");
 
-    expect(response.status).to.equal(401);
-  });
+      expect(response.status).to.equal(401);
+    });
 
-  it("should fail with 401 when there's DB Error", async () => {
-    const response = await request(app)
-      .post("/auth/token-verification")
-      .set("Cookie", `POODADAK_TOKEN=${invalidDBIDToken}`);
+    it("should fail with 401 when there's DB Error", async () => {
+      const response = await request(app)
+        .post("/auth/token-verification")
+        .set("Cookie", `POODADAK_TOKEN=${invalidDBIDToken}`);
 
-    expect(response.status).to.equal(500);
+      expect(response.status).to.equal(500);
+    });
   });
 });

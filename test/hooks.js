@@ -7,7 +7,7 @@ const { SOCIAL_SERVICE, USER_LEVEL } = require("../utils/constants");
 
 exports.mochaHooks = {
   async beforeAll() {
-    await mongoose.connect(process.env.TEST_DB_LOCAL_URL);
+    mongoose.connect(process.env.TEST_DB_LOCAL_URL);
 
     await Toilet.create({
       _id: process.env.TEST_TOILET_ID,
@@ -66,7 +66,7 @@ exports.mochaHooks = {
       username: "푸다닥-네이버",
       level: USER_LEVEL.BRONZE,
       email: "poodadak.naver@gmail.com",
-      socialService: SOCIAL_SERVICE.KAKAO,
+      socialService: SOCIAL_SERVICE.NAVER,
       reviewList: [process.env.TEST_REVIEW_ID_USER_NAVER],
     });
 
