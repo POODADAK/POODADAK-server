@@ -23,7 +23,7 @@ describe("GET /review/:reviewId", () => {
   });
 });
 
-describe("post /review", () => {
+describe("POST /review", () => {
   const token = signToken(process.env.TEST_USER_ID_NAVER);
 
   const newReview = {
