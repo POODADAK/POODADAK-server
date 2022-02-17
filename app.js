@@ -1,5 +1,7 @@
 require("dotenv").config();
-require("./config/mongoose");
+if (process.env.NODE_ENV !== "test") {
+  require("./config/mongoose");
+}
 
 const path = require("path");
 

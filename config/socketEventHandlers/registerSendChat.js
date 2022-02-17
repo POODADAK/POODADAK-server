@@ -13,11 +13,9 @@ function registerSendChat(socket, chatroomId) {
     }
 
     try {
-      const existingChatroom = await Chatroom.findByIdAndUpdate(chatroomId, {
+      await Chatroom.findByIdAndUpdate(chatroomId, {
         $push: { chatList: chat },
       });
-
-      chat.updatedChatListLength = existingChatroom.chatList.length + 1;
 
       socket.broadcast.to(roomName).emit("receiveChat", chat);
     } catch (error) {

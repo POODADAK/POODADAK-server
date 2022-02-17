@@ -30,6 +30,7 @@ exports.findLiveChatroomListByToilet = async (
       String(liveChatroomList[i].participant) === String(userId)
     ) {
       myChatroom = liveChatroomList[i];
+      break;
     }
   }
 

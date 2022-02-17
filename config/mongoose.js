@@ -2,10 +2,7 @@ const mongoose = require("mongoose");
 
 mongoose.set("debug", true);
 
-const DB_URL =
-  process.env.NODE_ENV === "test"
-    ? process.env.TEST_DB_LOCAL_URL
-    : process.env.DB_URL;
+const DB_URL = process.env.DB_URL;
 
 mongoose.connect(DB_URL, {
   useUnifiedTopology: true,
