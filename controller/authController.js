@@ -191,19 +191,19 @@ exports.signinNaver = async (req, res, next) => {
       return;
     }
 
-    let userInfo = await getUser({ email, socialService });
+    let currentUser = await getUser({ email, socialService });
 
-    if (!userInfo) {
+    if (!currentUser) {
       const newUser = {
         username: nickname,
         email,
         socialService,
       };
 
-      userInfo = await createUser(newUser);
+      currentUser = await createUser(newUser);
     }
 
-    createAndSendToken(userInfo, res);
+    createAndSendToken(currentUser, res);
   } catch (error) {
     const errMessage =
       error instanceof mongoose.Error
