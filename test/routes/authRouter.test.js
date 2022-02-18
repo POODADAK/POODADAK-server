@@ -221,23 +221,13 @@ describe("/naver", () => {
   });
 });
 
-describe("/token-elimination", () => {
-  it("should respond with 200 and 'POODADAK_TOKEN=;' set-cookie header", async () => {
-    const response = await request(app).post("/auth/token-elimination");
-
-    expect(response.status).to.equal(200);
-    expect(response.header).to.have.own.property("set-cookie");
-    expect(response.header["set-cookie"][0]).to.include("POODADAK_TOKEN=;");
-  });
-});
-
 describe("/token-verification", () => {
   describe("success", () => {
     describe("kakao token", () => {
       it("should respond with 200, userId, and verified result", async () => {
         const response = await request(app)
           .post("/auth/token-verification")
-          .set("Cookie", `POODADAK_TOKEN=${kakaoToken}`);
+          .set("Authorization", `Bearer ${kakaoToken}`);
 
         expect(response.status).to.equal(200);
         expect(response.body.result).to.equal(RESPONSE_RESULT.VERIFIED);
@@ -249,7 +239,7 @@ describe("/token-verification", () => {
       it("should respond with 200, userId, and verified result", async () => {
         const response = await request(app)
           .post("/auth/token-verification")
-          .set("Cookie", `POODADAK_TOKEN=${naverToken}`);
+          .set("Authorization", `Bearer ${naverToken}`);
 
         expect(response.status).to.equal(200);
         expect(response.body.result).to.equal(RESPONSE_RESULT.VERIFIED);
@@ -268,23 +258,23 @@ describe("/token-verification", () => {
     it("should fail with 404 when token has no matching user", async () => {
       const response = await request(app)
         .post("/auth/token-verification")
-        .set("Cookie", `POODADAK_TOKEN=${noUserToken}`);
+        .set("Authorization", `Bearer ${noUserToken}`);
 
       expect(response.status).to.equal(404);
     });
 
-    it("should fail with 401 when token is invalid", async () => {
+    it("should fail with 400 when token is invalid", async () => {
       const response = await request(app)
         .post("/auth/token-verification")
-        .set("Cookie", "POODADAK_TOKEN=invalid");
+        .set("Authorization", `invalid`);
 
-      expect(response.status).to.equal(401);
+      expect(response.status).to.equal(400);
     });
 
     it("should fail with 401 when there's DB Error", async () => {
       const response = await request(app)
         .post("/auth/token-verification")
-        .set("Cookie", `POODADAK_TOKEN=${invalidDBIDToken}`);
+        .set("Authorization", `Bearer ${invalidDBIDToken}`);
 
       expect(response.status).to.equal(500);
     });

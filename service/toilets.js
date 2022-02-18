@@ -47,21 +47,6 @@ exports.getToiletById = async function (toiletId) {
     .lean();
 };
 
-exports.getReviews = async function (toiletId) {
-  const { reviewList } = await Toilet.findById(toiletId)
-    .populate({
-      path: "reviewList",
-      populate: { path: "toilet", model: "Toilet" },
-    })
-    .populate({
-      path: "reviewList",
-      populate: { path: "writer", model: "User" },
-    })
-    .lean();
-
-  return reviewList;
-};
-
 exports.updateLatestToiletPaperInfoById = async function (
   toiletId,
   hasToiletPaper
