@@ -6,9 +6,14 @@ const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../utils/constants");
 const ErrorWithStatus = require("../utils/ErrorwithStatus");
 
 const verifyPoodadakToken = async (req, res, next) => {
-  const fetchedToken = req.cookies.POODADAK_TOKEN;
+  let prefix;
+  let fetchedToken;
 
-  if (!fetchedToken) {
+  if (req.headers.authorization) {
+    [prefix, fetchedToken] = req.headers.authorization.split(" ");
+  }
+
+  if (prefix !== "Bearer" || !fetchedToken) {
     next(
       new ErrorWithStatus(
         null,

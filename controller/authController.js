@@ -13,18 +13,12 @@ const ErrorWithStatus = require("../utils/ErrorwithStatus");
 const signToken = require("../utils/signToken");
 
 function createAndSendToken(user, res) {
-  const token = signToken(user._id);
-  const cookieOptions = {
-    expires: new Date(Date.now() + Number(process.env.JWT_EXPIRE_TIME)),
-    httpOnly: true,
-    sameSite: "none",
-    secure: true,
-  };
+  const POODADAK_TOKEN = signToken(user._id);
 
-  res.cookie("POODADAK_TOKEN", token, cookieOptions);
   res.json({
     result: RESPONSE_RESULT.OK,
     userId: user._id,
+    POODADAK_TOKEN: POODADAK_TOKEN,
   });
 
   return;
