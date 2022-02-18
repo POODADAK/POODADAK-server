@@ -19,6 +19,21 @@ exports.getNearToilets = async function (lat, lng) {
   });
 };
 
+exports.getMapToilets = async function (lat, lng, distance) {
+  return await Toilet.find({
+    location: {
+      $near: {
+        $geometry: {
+          type: "Point",
+          coordinates: [lng, lat],
+        },
+        $maxDistance: distance,
+        $minDistance: 0,
+      },
+    },
+  });
+};
+
 exports.getToiletById = async function (toiletId) {
   return await Toilet.findById(toiletId).populate("reviewList");
 };

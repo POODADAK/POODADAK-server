@@ -1,5 +1,6 @@
 const {
   getNearToilets,
+  getMapToilets,
   getReviews,
   getToiletById,
 } = require("../service/toilets");
@@ -10,6 +11,29 @@ exports.getNearToiletsList = async (req, res, next) => {
   const { lat, lng } = req.query;
   try {
     const toiletList = await getNearToilets(lat, lng);
+
+    res.json({
+      result: RESPONSE_RESULT.OK,
+      toiletList,
+    });
+
+    return;
+  } catch (error) {
+    next(
+      new ErrorWithStatus(
+        error,
+        400,
+        RESPONSE_RESULT.ERROR,
+        ERROR_MESSAGES.FAILED_TO_GET_TOILET
+      )
+    );
+  }
+};
+
+exports.getMapToiletsList = async (req, res, next) => {
+  const { lat, lng, distance } = req.query;
+  try {
+    const toiletList = await getMapToilets(lat, lng, distance);
 
     res.json({
       result: RESPONSE_RESULT.OK,
