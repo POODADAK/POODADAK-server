@@ -35,7 +35,16 @@ exports.getMapToilets = async function (lat, lng, distance) {
 };
 
 exports.getToiletById = async function (toiletId) {
-  return await Toilet.findById(toiletId).populate("reviewList");
+  return await Toilet.findById(toiletId)
+    .populate({
+      path: "reviewList",
+      populate: { path: "toilet", model: "Toilet" },
+    })
+    .populate({
+      path: "reviewList",
+      populate: { path: "writer", model: "User" },
+    })
+    .lean();
 };
 
 exports.getReviews = async function (toiletId) {
