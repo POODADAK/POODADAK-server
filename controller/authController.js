@@ -208,19 +208,6 @@ exports.signinNaver = async (req, res, next) => {
   }
 };
 
-exports.eraseCookie = (req, res, next) => {
-  const cookieOptions = {
-    httpOnly: true,
-    sameSite: "none",
-    secure: true,
-  };
-
-  res.clearCookie("POODADAK_TOKEN", cookieOptions);
-  res.json({
-    result: RESPONSE_RESULT.TOKEN_DELETED,
-  });
-};
-
 exports.sendVerified = (req, res, next) => {
   res.json({
     result: RESPONSE_RESULT.VERIFIED,
