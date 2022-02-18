@@ -7,8 +7,8 @@ const ErrorWithStatus = require("../utils/ErrorwithStatus");
 
 const verifyPoodadakTokenSocket = async (socket, next) => {
   try {
-    const isTokenInHeader =
-      socket.request.headers.cookie.startsWith("POODADAK_TOKEN");
+    // console.log(socket.handshake.auth, "token?");
+    const isTokenInHeader = socket.handshake.auth;
 
     if (!isTokenInHeader) {
       throw new Error("no token in header!");

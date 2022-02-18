@@ -6,7 +6,7 @@ const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../utils/constants");
 const ErrorWithStatus = require("../utils/ErrorwithStatus");
 
 const verifyPoodadakToken = async (req, res, next) => {
-  const fetchedToken = req.cookies.POODADAK_TOKEN;
+  const fetchedToken = req.body.POODADAK_TOKEN;
 
   if (!fetchedToken) {
     next(
