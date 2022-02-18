@@ -7,12 +7,11 @@ const request = require("supertest");
 const app = require("../../app");
 const { RESPONSE_RESULT } = require("../../utils/constants");
 const signToken = require("../../utils/signToken");
-const kakaoToken = signToken(process.env.TEST_USER_ID_KAKAO);
-const naverToken = signToken(process.env.TEST_USER_ID_NAVER);
-const noUserToken = signToken(process.env.TEST_USER_ID_NOT_IN_DB);
-const invalidDBIDToken = signToken(
-  process.env.TEST_USER_ID_INVALID_DB_OBJECT_ID
-);
+const { validMockUserNAVER, validMockUserKAKAO } = require("../mockData");
+const kakaoToken = signToken(validMockUserKAKAO._id);
+const naverToken = signToken(validMockUserNAVER._id);
+const noUserToken = signToken("620defbe86f47a3d02c771e1");
+const invalidDBIDToken = signToken("invalidString");
 
 describe("/kakao", () => {
   const request = httpMocks.createRequest({
@@ -60,9 +59,7 @@ describe("/kakao", () => {
 
       expect(response._getStatusCode()).to.equal(200);
       expect(response._getJSONData().result).to.equal(RESPONSE_RESULT.OK);
-      expect(response._getJSONData().userId).to.equal(
-        process.env.TEST_USER_ID_KAKAO
-      );
+      expect(response._getJSONData().userId).to.equal(validMockUserKAKAO._id);
     });
   });
 
@@ -160,9 +157,7 @@ describe("/naver", () => {
 
       expect(response._getStatusCode()).to.equal(200);
       expect(response._getJSONData().result).to.equal(RESPONSE_RESULT.OK);
-      expect(response._getJSONData().userId).to.equal(
-        process.env.TEST_USER_ID_NAVER
-      );
+      expect(response._getJSONData().userId).to.equal(validMockUserNAVER._id);
     });
   });
 
@@ -246,7 +241,7 @@ describe("/token-verification", () => {
 
         expect(response.status).to.equal(200);
         expect(response.body.result).to.equal(RESPONSE_RESULT.VERIFIED);
-        expect(response.body.userId).to.equal(process.env.TEST_USER_ID_KAKAO);
+        expect(response.body.userId).to.equal(validMockUserKAKAO._id);
       });
     });
 
@@ -258,7 +253,7 @@ describe("/token-verification", () => {
 
         expect(response.status).to.equal(200);
         expect(response.body.result).to.equal(RESPONSE_RESULT.VERIFIED);
-        expect(response.body.userId).to.equal(process.env.TEST_USER_ID_NAVER);
+        expect(response.body.userId).to.equal(validMockUserNAVER._id);
       });
     });
   });

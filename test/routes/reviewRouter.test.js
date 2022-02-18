@@ -3,37 +3,35 @@ const request = require("supertest");
 
 const app = require("../../app");
 const signToken = require("../../utils/signToken");
+const {
+  validMockToilet,
+  validMockUserNAVER,
+  validMockReviewUserNAVER,
+} = require("../mockData");
 
 describe("GET /review/:reviewId", () => {
   it("should respond with 200 and get review", async () => {
     const response = await request(app).get(
-      `/review/${process.env.TEST_REVIEW_ID_USER_NAVER}`
+      `/review/${validMockReviewUserNAVER._id}`
     );
 
     expect(response.status).to.equal(200);
-    expect(response.body).to.deep.equal({
-      _id: process.env.TEST_REVIEW_ID_USER_NAVER,
-      toilet: process.env.TEST_TOILET_ID,
-      rating: 5,
-      hasToiletPaper: false,
-      description: "배포성공 네이버",
-      image:
-        "https://poodadak-image.s3.ap-northeast-2.amazonaws.com/a59c4347690b0c6fb5edcbfc412eeb8a",
-    });
+    expect(response.body).to.deep.equal(validMockReviewUserNAVER);
   });
 });
 
 describe("POST /review", () => {
-  const token = signToken(process.env.TEST_USER_ID_NAVER);
+  const token = signToken(validMockUserNAVER._id);
 
   const newReview = {
-    writer: process.env.TEST_USER_ID_NAVER,
-    toilet: process.env.TEST_TOILET_ID,
+    writer: validMockUserNAVER._id,
+    toilet: validMockToilet._id,
     rating: 5,
     description: "깨끗한 화장실 !!",
     image:
       "https://poodadak-image.s3.ap-northeast-2.amazonaws.com/a59c4347690b0c6fb5edcbfc412eeb8a",
     updatedAt: "2022-02-17T08:31:50.922Z",
+    __v: 0,
   };
 
   it("should respond with 200 and review is saved in the database.", async () => {
@@ -44,15 +42,7 @@ describe("POST /review", () => {
 
     expect(response.status).to.equal(200);
     expect(response.body.result).to.equal("ok");
-    expect(response.body.review).to.include({
-      writer: process.env.TEST_USER_ID_NAVER,
-      toilet: process.env.TEST_TOILET_ID,
-      rating: 5,
-      description: "깨끗한 화장실 !!",
-      image:
-        "https://poodadak-image.s3.ap-northeast-2.amazonaws.com/a59c4347690b0c6fb5edcbfc412eeb8a",
-      updatedAt: "2022-02-17T08:31:50.922Z",
-    });
+    expect(response.body.review).to.include(newReview);
   });
 
   it("review should not be saved in the database with empty description.", async () => {
@@ -70,10 +60,10 @@ describe("POST /review", () => {
 });
 
 describe("POST /review/:reviewId", () => {
-  const token = signToken(process.env.TEST_USER_ID_NAVER);
+  const token = signToken(validMockUserNAVER._id);
 
   const submittedReview = {
-    toilet: process.env.TEST_TOILET_ID,
+    toilet: validMockToilet._id,
     rating: 5,
     description: "휴지가 있네용",
     image:
@@ -82,7 +72,7 @@ describe("POST /review/:reviewId", () => {
     updatedAt: "2022-02-17T08:31:50.922Z",
   };
 
-  const params = process.env.TEST_REVIEW_ID_USER_NAVER;
+  const params = validMockReviewUserNAVER._id;
 
   it("should respond with 200 and review needs to be modified.", async () => {
     const response = await request(app)
@@ -108,9 +98,9 @@ describe("POST /review/:reviewId", () => {
 });
 
 describe("DELETE /review/:reviewId", () => {
-  const token = signToken(process.env.TEST_USER_ID_NAVER);
+  const token = signToken(validMockUserNAVER._id);
 
-  const params = process.env.TEST_REVIEW_ID_USER_NAVER;
+  const params = validMockReviewUserNAVER._id;
 
   it("should review needs to be delete", async () => {
     const response = await request(app)
