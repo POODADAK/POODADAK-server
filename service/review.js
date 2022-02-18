@@ -2,10 +2,7 @@ const Review = require("../model/Review");
 const Toilet = require("../model/Toilet");
 
 exports.findReviewById = async (reviewId) => {
-  const review = await Review.findById(
-    reviewId,
-    "rating description image toilet"
-  ).lean();
+  const review = await Review.findById(reviewId).lean();
 
   const { latestToiletPaperInfo } = await Toilet.findById(
     review.toilet,
