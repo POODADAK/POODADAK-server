@@ -49,3 +49,10 @@ exports.createChatroom = async (toiletId, userId) => {
 exports.getChatroomById = async (chatroomId) => {
   return await Chatroom.findById(chatroomId);
 };
+
+exports.getUsersLiveChatroom = async (userId) => {
+  return await Chatroom.find({
+    $and: [{ isLive: true }],
+    $or: [{ owner: userId }, { participant: userId }],
+  });
+};

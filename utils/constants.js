@@ -22,12 +22,15 @@ exports.ERROR_MESSAGES = {
   FAILED_TO_GET_TOILET: "ERROR: failed to get toilet...",
   FAILED_TO_GET_REVIEW_LIST: "ERROR: failed to get reviewList...",
   FAILED_TO_CREATE_CHATROOM: "ERROR: failed to create chatroom...",
+  FAILED_TO_GET_CHATROOM: "ERROR: failed to get chatroom...",
   FAILED_TO_CHECK_CHATROOM_LIVE_STATUS:
     "ERROR: failed to check chatroom's live-status...",
   USER_DID_NOT_APPROVE_NECESSARY_INFO:
     "ERROR: Please, login again, select email & nickname too.",
   FAILED_TO_VERIFY_TOKEN: "ERROR: Cannot verify your token.",
   FAILED_TO_FIND_MATCHING_USER: "ERROR: Cannot find user.",
+  FAILED_TO_GET_USERS_LIVE_CHATROOM:
+    "ERROR: Failed to get users live chatroom.",
 };
 
 exports.RESPONSE_RESULT = {
